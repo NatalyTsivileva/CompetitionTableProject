@@ -1,3 +1,6 @@
 <resources>
-	<string name="app_name">TableTestCase</string>
+	<string name="app_name" translatable="false">Competitions</string>
+	<string name="label_competing">Competing</string>
+	<string name="label_score">Score</string>
+	<string name="label_place">Place</string>
 </resources>

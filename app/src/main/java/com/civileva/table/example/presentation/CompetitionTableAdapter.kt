@@ -8,24 +8,28 @@ import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.widget.addTextChangedListener
 import com.civileva.table.example.data.CompetitionTable
 import com.civileva.table.example.data.ICompetitionTableCell
+import com.civileva.table.example.presentation.dashboard.*
 import com.civileva.table.example.utils.InputUtils
+import com.civileva.table.test.R
 
 
 class CompetitionTableAdapter(
-	private val table: CompetitionTable,
 	private val context: Context,
-	private val attr: AttributeSet
+	private val attr: AttributeSet,
+	private val table: CompetitionTable,
+	private val legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>
 ) : ITableAdapter<ICompetitionTableCell> {
 
-	private val tableViews: Array<View> = Array(table.size * table.size, ::initialView)
+	private val tableViews: Array<View> = Array(table.size * table.size, ::initTableCellView)
 
 
-	private fun initialView(cellIndex: Int): View {
+	private fun initTableCellView(cellIndex: Int): View {
 		val cell = table.cells[cellIndex]
 		return if (cell.isEnabledForInput()) {
 			createInputView(cell)
@@ -55,7 +59,7 @@ class CompetitionTableAdapter(
 
 		if (!isFailedInput) {
 			table.updateScore(data, newScore)
-			aggregateRowSim(data.rowNumber)
+			aggregateRowSum(data.rowNumber)
 			checkRewards()
 		}
 
@@ -74,14 +78,7 @@ class CompetitionTableAdapter(
 	}
 
 
-	private fun aggregateRowSim(rowNumber: Int) {
-		val aggregator = table.aggregateRow(rowNumber)
-		if (aggregator.isRowFullFilled) {
-			Toast.makeText(context, "Сумма=${aggregator.rowSum}", Toast.LENGTH_SHORT).show()
-		}
-	}
-
-	private fun checkRewards() {
+	fun checkRewards(): List<CompetitionTable.Rewards>? {
 		val rewards = table.checkRewards()
 		var text = "МЕСТА:\n"
 
@@ -92,6 +89,15 @@ class CompetitionTableAdapter(
 			Log.d("REWARDS", text)
 			Toast.makeText(context, text, Toast.LENGTH_LONG).show()
 		}
+		return rewards
+	}
+
+	fun aggregateRowSum(rowNumber: Int): Int {
+		val aggregator = table.aggregateRow(rowNumber)
+		if (aggregator.isRowFullFilled) {
+			Toast.makeText(context, "Сумма=${aggregator.rowSum}", Toast.LENGTH_SHORT).show()
+		}
+		return aggregator.rowSum
 	}
 
 
@@ -99,11 +105,11 @@ class CompetitionTableAdapter(
 		return View(context, attr).apply { setBackgroundColor(Color.BLACK) }
 	}
 
-	override fun getViews(): Array<View> {
+	override fun getTableViews(): Array<View> {
 		return tableViews
 	}
 
-	override fun getView(index: Int): View {
+	override fun getTableView(index: Int): View {
 		return tableViews[index]
 	}
 
@@ -121,6 +127,19 @@ class CompetitionTableAdapter(
 	 **/
 	override fun getTableSize(): Int {
 		return table.size
+	}
+
+
+	override fun getLegendPanels(): List<ILegendPanel> {
+		return legendsPanels.first
+	}
+
+	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
+		return legendsPanels.first.filter { it.direction == direction }
+	}
+
+	override fun getLegendViews(legendId: Int): List<View> {
+		return legendsPanels.second[legendId] ?: emptyList()
 	}
 
 }

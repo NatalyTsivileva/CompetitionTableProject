@@ -1,16 +1,18 @@
 package com.civileva.table.example.presentation
 
 import android.view.View
+import com.civileva.table.example.presentation.dashboard.ILegendPanel
 
 interface ITableAdapter<T> {
 	fun getTableSize(): Int
-	fun getViews(): Array<View>
+
 	fun getData(): Array<T>
-
-	fun getView(index: Int): View
 	fun getData(index: Int): T
-}
 
-interface ICompetitionTableAdapter<T> : ITableAdapter<T> {
+	fun getTableViews(): Array<View>
+	fun getTableView(index: Int): View
 
+	fun getLegendPanels(): List<ILegendPanel>
+	fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel>
+	fun getLegendViews(legendId: Int): List<View>
 }
