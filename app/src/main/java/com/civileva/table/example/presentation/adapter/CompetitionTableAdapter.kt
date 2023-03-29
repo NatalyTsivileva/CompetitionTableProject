@@ -4,11 +4,10 @@ import android.content.Context
 import android.graphics.Color
 import android.text.Editable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.widget.addTextChangedListener
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Sorting
@@ -27,9 +26,9 @@ class CompetitionTableAdapter(
 	private val tableViews: ArrayList<View> = ArrayList(table.elementCount)
 
 	init {
-		 (0 until table.elementCount).forEach {index->
-			 tableViews.add(createView(index))
-		 }
+		(0 until table.elementCount).forEach { index ->
+			tableViews.add(createView(index))
+		}
 	}
 
 
@@ -55,32 +54,55 @@ class CompetitionTableAdapter(
 		return view
 	}
 
-	private fun processInput(cellInteger: CellInteger, ed: Editable?) {
+	private fun processInput(cell: CellInteger, ed: Editable?) {
 		val newScore = InputUtils.safeInt(ed)
 
 		val isFailedInput = newScore == InputUtils.FAILED_INT_INPUT
 
 		if (!isFailedInput) {
-			table.updateCellData(cellInteger, newScore)
-			aggregateRowSum(cellInteger.rowNumber)
-			checkRewards()
+			table.updateCellData(cell, newScore)
+			updateScoreLegend(cell)
+			updateRewards()
 		}
 
-		setupTextColor(cellInteger.index, isFailedInput, ed)
+		setupTextColor(cell.index, isFailedInput, ed)
 	}
 
-	fun checkRewards(): List<Sorting<Int, CellInteger>>? {
-		val rewards = table.sortTableRows(Sorting.Direction.DESC)
-		var text = "МЕСТА:\n"
+	private fun updateScoreLegend(cell: CellInteger) {
+		val cursor = aggregateRowSum(cell.rowNumber)
+		val legendViews = getLegendViews(ILegendPanel.RIGHT_SCORE)
+		val view = legendViews[cell.rowNumber + 1]
 
-		if (rewards != null) {
-			rewards.forEach {
-				text += " N ряда=${it.cursor.rowNumber}, Место=${it.order}, Количество очков=${it.cursor.dataSum}\n"
-			}
-			Log.d("REWARDS", text)
-			Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+		val legendText = if (cursor.isRowFullFilled) {
+			cursor.dataSum.toString()
+		}else{
+			""
 		}
-		return rewards
+
+		(view as? AppCompatTextView)?.apply {
+			text = legendText
+			requestLayout()
+			invalidate()
+		}
+	}
+
+
+	fun updateRewards() {
+		val legendViews = getLegendViews(ILegendPanel.RIGHT_PLACE)
+
+		val rewards = table.sortTableRows(Sorting.Direction.DESC)
+
+		rewards?.forEach {
+			val index = it.cursor.rowNumber + 1
+			val view = legendViews[index]
+
+			(view as? AppCompatTextView)?.apply {
+				val place = (it.order + 1).toString()
+				text = place
+				requestLayout()
+				invalidate()
+			}
+		}
 	}
 
 	private fun createPlaceholderView(): View {

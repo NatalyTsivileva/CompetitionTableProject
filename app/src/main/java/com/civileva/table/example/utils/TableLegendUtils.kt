@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.updatePadding
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Table
@@ -121,7 +121,7 @@ object TableLegendUtils {
 	}
 
 	private fun invokeLegendTextView(context: Context, text: String, paddings: Rect? = null) =
-		TextView(context).apply {
+		AppCompatTextView(context).apply {
 			setText(text)
 			gravity = Gravity.CENTER
 			paddings?.let { newPadding(it) }

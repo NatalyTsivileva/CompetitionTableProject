@@ -74,7 +74,6 @@ open class TableView<T :Comparable<T>,C:ITableCell<T>>(
 					)
 				}
 
-				//TODO: для панели типа "Список с заголовком" первую заголовочную ячейку поднять над остальными немного вверх
 				ILegendPanel.Direction.LEFT, ILegendPanel.Direction.RIGHT -> {
 					val newHeight = contentHeight / panel.legend.itemsCount
 
