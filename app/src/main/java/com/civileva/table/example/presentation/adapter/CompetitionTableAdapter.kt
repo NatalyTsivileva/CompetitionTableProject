@@ -116,4 +116,10 @@ class CompetitionTableAdapter(
 	override fun getTableView(index: Int): View {
 		return tableViews[index]
 	}
+
+	override fun destroyTableViews() {
+		tableViews.clear()
+	}
+
+
 }

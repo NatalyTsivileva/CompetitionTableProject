@@ -21,7 +21,6 @@ object TableLegendUtils {
 		val panelList = mutableListOf<ILegendPanel>()
 		val views = mutableMapOf<Int, List<View>>()
 
-		val paddingsM05 = context.resources.getDimension(R.dimen.m05).toInt()
 		val paddingsM1 = context.resources.getDimension(R.dimen.m1).toInt()
 		val paddingsM15 = context.resources.getDimension(R.dimen.m15).toInt()
 

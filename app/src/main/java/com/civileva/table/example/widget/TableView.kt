@@ -8,13 +8,14 @@ import com.civileva.table.example.presentation.adapter.base.ILegendAdapter
 import com.civileva.table.example.presentation.adapter.base.ITableAdapter
 import com.civileva.table.example.presentation.legend.ILegendPanel
 
-open class TableView<T :Comparable<T>,C:ITableCell<T>>(
+open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 	context: Context,
 	val attrs: AttributeSet,
 ) : ViewGroup(context, attrs) {
 
 	var tableAdapter: ITableAdapter<T, C>? = null
 		set(value) {
+			release()
 			field = value
 			requestLayout()
 			invalidate()
@@ -28,6 +29,7 @@ open class TableView<T :Comparable<T>,C:ITableCell<T>>(
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 		val width = MeasureSpec.getSize(widthMeasureSpec)
 		val height = MeasureSpec.getSize(heightMeasureSpec)
+
 
 		(tableAdapter as? ILegendAdapter)?.let {
 			measureLegend(it, parentWidth = width, parentHeight = height)
@@ -102,10 +104,12 @@ open class TableView<T :Comparable<T>,C:ITableCell<T>>(
 
 		val matrixSize = adapter.getTableSize() * adapter.getTableSize()
 
-		for (i: Int in 0 until matrixSize) {
-			val widthSpec = MeasureSpec.makeMeasureSpec(cellWidth, MeasureSpec.EXACTLY)
-			val heightSpec = MeasureSpec.makeMeasureSpec(cellHeight, MeasureSpec.EXACTLY)
-			adapter.getTableView(i).measure(widthSpec, heightSpec)
+		if (adapter.getTableViews().count() == matrixSize) {
+			for (i: Int in 0 until matrixSize) {
+				val widthSpec = MeasureSpec.makeMeasureSpec(cellWidth, MeasureSpec.EXACTLY)
+				val heightSpec = MeasureSpec.makeMeasureSpec(cellHeight, MeasureSpec.EXACTLY)
+				adapter.getTableView(i).measure(widthSpec, heightSpec)
+			}
 		}
 	}
 
@@ -213,24 +217,27 @@ open class TableView<T :Comparable<T>,C:ITableCell<T>>(
 			var startY = (y + paddingTop + panelsParams.topPanelsHeight).toInt()
 
 			val data = adapter.getTableData()
+			val viewCount = adapter.getTableViews().count()
 
-			data.forEach { d ->
-				val view = adapter.getTableView(d.index)
-				val viewHeight = view.measuredHeight
-				val viewWidth = view.measuredWidth
+			if (data.count() == viewCount) {
+				data.forEach { d ->
+					val view = adapter.getTableView(d.index)
+					val viewHeight = view.measuredHeight
+					val viewWidth = view.measuredWidth
 
-				if (d.isNewRow()) {
-					startY += viewHeight
-					startX = (x + paddingStart + panelsParams.leftPanelsWidth).toInt()
-				} else {
-					if (!d.isFirst())
-						startX += viewWidth
-				}
+					if (d.isNewRow()) {
+						startY += viewHeight
+						startX = (x + paddingStart + panelsParams.leftPanelsWidth).toInt()
+					} else {
+						if (!d.isFirst())
+							startX += viewWidth
+					}
 
-				view.layout(startX, startY, startX + viewWidth, startY + viewHeight)
+					view.layout(startX, startY, startX + viewWidth, startY + viewHeight)
 
-				if (!view.isAttachedToWindow) {
-					addView(view)
+					if (!view.isAttachedToWindow) {
+						addView(view)
+					}
 				}
 			}
 		}
@@ -258,5 +265,11 @@ open class TableView<T :Comparable<T>,C:ITableCell<T>>(
 
 	fun getContentAreaHeight(parentHeight: Int, params: ILegendAdapter.PanelsParams): Int {
 		return parentHeight - getTopPadding(params) - getBottomPadding(params)
+	}
+
+	fun release() {
+		removeAllViews()
+		tableAdapter?.destroyTableViews()
+		(tableAdapter as? ILegendAdapter)?.destroyLegendViews()
 	}
 }

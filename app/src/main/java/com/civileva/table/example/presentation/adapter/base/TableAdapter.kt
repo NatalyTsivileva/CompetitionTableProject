@@ -20,10 +20,10 @@ import com.civileva.table.example.presentation.legend.ILegendPanel
  * второй - карта вида <PanelID, ListOfViewForPanel> (список вьюх для каждой панели)
  */
 abstract class TableAdapter<T:Comparable<T>, C:ITableCell<T>>(
-	private val context: Context,
-	private val attr: AttributeSet,
+	context: Context,
+	attr: AttributeSet,
 	private val table: Table<T,C>,
-	private val legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>
+	private var legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>?
 ) : ITableAdapter<T, C>, ILegendAdapter {
 
 
@@ -59,19 +59,23 @@ abstract class TableAdapter<T:Comparable<T>, C:ITableCell<T>>(
 
 
 	override fun getLegendPanels(): List<ILegendPanel> {
-		return legendsPanels.first
+		return legendsPanels?.first?: emptyList()
 	}
 
 	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
-		return legendsPanels.first.filter { it.direction == direction }
+		return legendsPanels?.first?.filter { it.direction == direction }?: emptyList()
 	}
 
 	override fun getLegendViews(panelId: Int): List<View> {
-		return legendsPanels.second[panelId] ?: emptyList()
+		return legendsPanels?.second?.get(panelId)?:emptyList()
 	}
 
 
 	override fun findLegendPanel(legendClass: Class<*>): ILegendPanel? {
-		return legendsPanels.first.find { it.legend.javaClass == legendClass }
+		return legendsPanels?.first?.find { it.legend.javaClass == legendClass }
+	}
+
+	override fun destroyLegendViews() {
+		legendsPanels = null
 	}
 }

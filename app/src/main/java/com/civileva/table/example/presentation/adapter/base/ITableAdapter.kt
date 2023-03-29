@@ -12,4 +12,6 @@ interface ITableAdapter<T : Comparable<T>, C : ITableCell<T>> {
 	fun getTableViews(): ArrayList<View>
 	fun getTableView(index: Int): View
 
+	fun destroyTableViews()
+
 }

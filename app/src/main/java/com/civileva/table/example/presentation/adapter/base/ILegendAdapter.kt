@@ -9,6 +9,7 @@ interface ILegendAdapter {
 	fun getLegendViews(panelId: Int): List<View>
 	fun findLegendPanel(legendClass: Class<*>): ILegendPanel?
 
+	fun destroyLegendViews()
 
 	/**
 	 * Возвращает пару [Ширина-Высота] для панели

@@ -3,4 +3,13 @@
 	<string name="label_competing">Competing</string>
 	<string name="label_score">Score</string>
 	<string name="label_place">Place</string>
+
+	<string name="menu_legend_only_iter">Only iterator legend</string>
+	<string name="menu_legend_full">Full legends</string>
+	<string name="menu_table_2x2">Table 2x2</string>
+	<string name="menu_table_4x4">Table 4x4</string>
+	<string name="menu_table_7x7">Table 7x7</string>
+	<string name="menu_table_10x10">Table 10x10</string>
+	<string name="menu_table_delete">Clean up</string>
+
 </resources>

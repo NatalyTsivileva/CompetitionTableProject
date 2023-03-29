@@ -4,6 +4,8 @@
 	<dimen name="m1">8dp</dimen>
 	<dimen name="m125">10dp</dimen>
 	<dimen name="m15">12dp</dimen>
+	<dimen name="m2">16dp</dimen>
+	<dimen name="m3">24dp</dimen>
 
 	<dimen name="m_5">5dp</dimen>
 	<dimen name="m_11">11dp</dimen>

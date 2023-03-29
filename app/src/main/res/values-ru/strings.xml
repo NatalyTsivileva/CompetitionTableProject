@@ -3,4 +3,14 @@
 	<string name="label_competing">Участник</string>
 	<string name="label_score">Сумма очков</string>
 	<string name="label_place">Место</string>
+
+	<string name="menu_legend_only_iter">Легенды-итераторы</string>
+	<string name="menu_legend_full">Все легенды</string>
+	<string name="menu_table_2x2">Таблица 2x2</string>
+	<string name="menu_table_4x4">Таблица 4x4</string>
+	<string name="menu_table_7x7">Таблица 7x7</string>
+	<string name="menu_table_10x10">Таблица 10x10</string>
+	<string name="menu_table_delete">Удалить таблицу</string>
+
+
 </resources>
