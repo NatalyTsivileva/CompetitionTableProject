@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.text.Editable
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
@@ -45,6 +46,7 @@ class CompetitionTableAdapter(
 		val view = AppCompatEditText(context, attr)
 		view.hint = "X"
 		view.isFocusableInTouchMode = true
+		view.gravity = Gravity.CENTER
 
 		view.addTextChangedListener {
 			processInput(cellInteger, it)

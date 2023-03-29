@@ -1,8 +1,11 @@
 package com.civileva.table.example.utils
 
 import android.content.Context
+import android.graphics.Rect
+import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.updatePadding
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.legend.*
@@ -13,10 +16,14 @@ object TableLegendUtils {
 	fun createCompetitionLegendPanel(
 		context: Context,
 		table: Table<Int, CellInteger>
-	): Pair< List<ILegendPanel>, Map<Int, List<View>>> {
+	): Pair<List<ILegendPanel>, Map<Int, List<View>>> {
 
 		val panelList = mutableListOf<ILegendPanel>()
 		val views = mutableMapOf<Int, List<View>>()
+
+		val paddingsM05 = context.resources.getDimension(R.dimen.m05).toInt()
+		val paddingsM1 = context.resources.getDimension(R.dimen.m1).toInt()
+		val paddingsM15 = context.resources.getDimension(R.dimen.m15).toInt()
 
 		//Left CompetitorN
 		val competitionLegend =
@@ -28,7 +35,7 @@ object TableLegendUtils {
 			override val legend: ILegend = competitionLegend
 		}
 		panelList.add(competitionPanel)
-		views[competitionPanel.id] = createLegendView(context, competitionLegend)
+		views[competitionPanel.id] = createLegendView(context, competitionLegend, null)
 
 
 		//Left Iterator
@@ -39,7 +46,8 @@ object TableLegendUtils {
 			override val legend: ILegend = itLeftLegend
 		}
 		panelList.add(itLeftPanel)
-		views[itLeftPanel.id] = createLegendView(context, itLeftLegend)
+		views[itLeftPanel.id] =
+			createLegendView(context, itLeftLegend, paddings = Rect(paddingsM15, 0, paddingsM15, 0))
 
 
 		// Top Iterator
@@ -50,7 +58,9 @@ object TableLegendUtils {
 			override val legend: ILegend = itTopLegend
 		}
 		panelList.add(itTopPanel)
-		views[itTopPanel.id] = createLegendView(context, itTopLegend)
+		views[itTopPanel.id] =
+			createLegendView(context, itTopLegend, paddings = Rect(0, paddingsM15, 0, 0))
+
 
 		//Right Score
 		val scoreLegend = LabeledListLegend(table.size, context.getString(R.string.label_score))
@@ -60,7 +70,9 @@ object TableLegendUtils {
 			override val legend: ILegend = scoreLegend
 		}
 		panelList.add(scorePanel)
-		views[scorePanel.id] = createLegendView(context, scoreLegend)
+		var viewsList = createLegendView(context,scoreLegend,paddings = Rect(paddingsM1, 0, paddingsM1, paddingsM1))
+		viewsList.first().newPadding(Rect(paddingsM1,paddingsM1,0,0))
+		views[scorePanel.id] = viewsList
 
 		//Right Place
 		val placeLegend = LabeledListLegend(table.size, context.getString(R.string.label_place))
@@ -70,14 +82,18 @@ object TableLegendUtils {
 			override val legend: ILegend = placeLegend
 		}
 		panelList.add(placePanel)
-		views[placePanel.id] = createLegendView(context, placeLegend)
+		viewsList =  createLegendView(context, placeLegend, paddings = Rect(paddingsM1, 0, paddingsM1, paddingsM1))
+		viewsList.first().newPadding(Rect(paddingsM1,paddingsM1,0,0))
+		views[placePanel.id] =  viewsList
+
 
 		return Pair(panelList, views)
 	}
 
 	private fun createLegendView(
 		context: Context,
-		legend: ILegend
+		legend: ILegend,
+		paddings: Rect?
 	): List<View> {
 
 		val list = mutableListOf<View>()
@@ -85,23 +101,39 @@ object TableLegendUtils {
 			is LabeledListLegend -> {
 				(0 until legend.itemsCount + 1).forEach {
 					val text = if (it == 0) legend.label else "?"
-					list.add(invokeLegendTextView(context, text))
+					list.add(invokeLegendTextView(context, text, paddings))
 				}
 			}
 
 			is IterationLegend -> {
-				val legendList = legend.legendTextList.map { invokeLegendTextView(context, it) }
+				val legendList =
+					legend.legendTextList.map { invokeLegendTextView(context, it, paddings) }
 				list.addAll(legendList)
 			}
 
 			is IterationLabeledLegend -> {
-				val legendList = legend.legendTextList.map { invokeLegendTextView(context, it) }
+				val legendList =
+					legend.legendTextList.map { invokeLegendTextView(context, it, paddings) }
 				list.addAll(legendList)
 			}
 		}
 		return list
 	}
 
-	private fun invokeLegendTextView(context: Context, text: String) =
-		TextView(context).apply { setText(text) }
+	private fun invokeLegendTextView(context: Context, text: String, paddings: Rect? = null) =
+		TextView(context).apply {
+			setText(text)
+			gravity = Gravity.CENTER
+			paddings?.let { newPadding(it) }
+		}
+
+	private fun View.newPadding(paddings: Rect) {
+		updatePadding(
+			left = paddings.left,
+			top = paddings.top,
+			right = paddings.right,
+			bottom = paddings.bottom
+		)
+	}
 }
+
