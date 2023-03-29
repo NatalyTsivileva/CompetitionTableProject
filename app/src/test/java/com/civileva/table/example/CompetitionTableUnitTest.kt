@@ -1,6 +1,8 @@
 package com.civileva.table.example
 
-import com.civileva.table.example.data.CompetitionTable
+import com.civileva.table.example.data.Sorting
+import com.civileva.table.example.data.Table
+import com.civileva.table.example.utils.TableUtils
 import org.junit.Assert
 import org.junit.Test
 
@@ -18,17 +20,17 @@ class CompetitionTableUnitTest {
 		val rowNumber = 3
 		val expectedRowSum = 6
 
-		val table = CompetitionTable(size)
+		val table = TableUtils.createIntegerTable(size)
 
 		for (columnIndex: Int in 0 until size) {
 			val index = (rowNumber * size) + columnIndex
-			table.updateScore(table.cells[index], 1)
+			table.updateCellData(table.getCell(index), 1)
 		}
 
-		val rowAggregate = table.aggregateRow(rowNumber)
+		val cursor = table.getCursor(rowNumber)
 
-		Assert.assertTrue(rowAggregate.isRowFullFilled)
-		Assert.assertEquals(expectedRowSum, rowAggregate.rowSum)
+		Assert.assertTrue(cursor.isRowFullFilled)
+	 	Assert.assertEquals(expectedRowSum, cursor.dataSum)
 	}
 
 	/**
@@ -37,33 +39,37 @@ class CompetitionTableUnitTest {
 	 * [  2   3   *  ]
 	 */
 	@Test
-	fun `when filled all table - while size=3 - should return places 1,1,2`() {
+	fun `when filled all table - while size=3 - should return places 0,0,1`() {
 		val size = 3
 
-		val table = CompetitionTable(size)
+		val table = TableUtils.createIntegerTable(size)
 
-		var cell = table.cells[1]
-		table.updateScore(cell, 5)
 
-		cell = table.cells[2]
-		table.updateScore(cell, 0)
+		var cell = table.getCell(1)
+		table.updateCellData(cell, 5)
 
-		cell = table.cells[3]
-		table.updateScore(cell, 3)
+		cell = table.getCell(2)
+		table.updateCellData(cell, 0)
 
-		cell = table.cells[5]
-		table.updateScore(cell, 4)
+		cell = table.getCell(3)
+		table.updateCellData(cell, 3)
 
-		cell = table.cells[6]
-		table.updateScore(cell, 2)
+		cell = table.getCell(5)
+		table.updateCellData(cell, 4)
 
-		cell = table.cells[7]
-		table.updateScore(cell, 3)
+		cell = table.getCell(6)
+		table.updateCellData(cell, 2)
 
-		val rewards = table.checkRewards()
+		cell = table.getCell(7)
+		table.updateCellData(cell, 3)
+
+		val rewards = table.sortTableRows(Sorting.Direction.ASC)
 		rewards?.forEach {
-			println("ряд=${it.aggr.rowNumber}, сумма очков=${it.aggr.rowSum}, место=${it.place}")
+			println("ряд=${it.cursor.rowNumber}, сумма очков=${it.cursor.dataSum}, место=${it.order}")
 		}
+		Assert.assertEquals(0,rewards?.get(0)?.order)
+		Assert.assertEquals(0,rewards?.get(1)?.order)
+		Assert.assertEquals(1,rewards?.get(2)?.order)
 	}
 
 	/**
@@ -75,27 +81,28 @@ class CompetitionTableUnitTest {
 	fun `when filled all table - while size=3 and one of rows not filled - should return null`() {
 		val size = 3
 
-		val table = CompetitionTable(size)
 
-		var cell = table.cells[1]
-		table.updateScore(cell, CompetitionTable.UNDEFINED_SCORE)
+		val table = TableUtils.createIntegerTable(size)
 
-		cell = table.cells[2]
-		table.updateScore(cell, 0)
+		var cell = table.getCell(1)
+		table.updateCellData(cell, Table.UNDEFINED_SCORE)
 
-		cell = table.cells[3]
-		table.updateScore(cell, 3)
+		cell = table.getCell(2)
+		table.updateCellData(cell, 0)
 
-		cell = table.cells[5]
-		table.updateScore(cell, 4)
+		cell = table.getCell(3)
+		table.updateCellData(cell, 3)
 
-		cell = table.cells[6]
-		table.updateScore(cell, 2)
+		cell = table.getCell(5)
+		table.updateCellData(cell, 4)
 
-		cell = table.cells[7]
-		table.updateScore(cell, 3)
+		cell = table.getCell(6)
+		table.updateCellData(cell, 2)
 
-		val rewards = table.checkRewards()
+		cell = table.getCell(7)
+		table.updateCellData(cell, 3)
+
+		val rewards = table.sortTableRows(Sorting.Direction.ASC)
 		Assert.assertEquals(null, rewards)
 	}
 
