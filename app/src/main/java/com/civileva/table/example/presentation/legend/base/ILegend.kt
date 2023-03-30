@@ -1,4 +1,4 @@
-package com.civileva.table.example.presentation.legend
+package com.civileva.table.example.presentation.legend.base
 
 interface ILegend {
 	val itemsCount: Int

@@ -5,10 +5,12 @@ import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.legend.*
+import com.civileva.table.example.presentation.legend.base.*
 import com.civileva.table.test.R
 
 object TableLegendUtils {
@@ -25,64 +27,38 @@ object TableLegendUtils {
 		val paddingsM15 = context.resources.getDimension(R.dimen.m15).toInt()
 
 		//Left CompetitorN
-		val competitionLegend =
-			IterationLabeledLegend(table.size, context.getString(R.string.label_competing))
-
-		val competitionPanel = object : ILegendPanel {
-			override val id: Int = ILegendPanel.LEFT_COMPETITION
-			override val direction: ILegendPanel.Direction = ILegendPanel.Direction.LEFT
-			override val legend: ILegend = competitionLegend
-		}
+		val competitionLegend =	IterationLabeledLegend(table.size, context.getString(R.string.label_competing))
+		val competitionPanel = LeftCompetitionLegendPanel(competitionLegend)
 		panelList.add(competitionPanel)
 		views[competitionPanel.id] = createLegendView(context, competitionLegend, null)
 
 
 		//Left Iterator
 		val itLeftLegend = IterationLegend(table.size)
-		val itLeftPanel = object : ILegendPanel {
-			override val id: Int = ILegendPanel.LEFT_ITER
-			override val direction: ILegendPanel.Direction = ILegendPanel.Direction.LEFT
-			override val legend: ILegend = itLeftLegend
-		}
+		val itLeftPanel = LeftIterationLegendPanel(itLeftLegend)
 		panelList.add(itLeftPanel)
-		views[itLeftPanel.id] =
-			createLegendView(context, itLeftLegend, paddings = Rect(paddingsM15, 0, paddingsM15, 0))
+		views[itLeftPanel.id] =	createLegendView(context, itLeftLegend, null)
 
 
 		// Top Iterator
 		val itTopLegend = IterationLegend(table.size)
-		val itTopPanel = object : ILegendPanel {
-			override val id: Int = ILegendPanel.TOP_ITER
-			override val direction: ILegendPanel.Direction = ILegendPanel.Direction.TOP
-			override val legend: ILegend = itTopLegend
-		}
+		val itTopPanel = TopIterationLegendPanel(itTopLegend)
 		panelList.add(itTopPanel)
-		views[itTopPanel.id] =
-			createLegendView(context, itTopLegend, paddings = Rect(0, paddingsM15, 0, 0))
+		views[itTopPanel.id] = createLegendView(context, itTopLegend, null)
 
 
 		//Right Score
 		val scoreLegend = LabeledListLegend(table.size, context.getString(R.string.label_score))
-		val scorePanel = object : ILegendPanel {
-			override val id: Int = ILegendPanel.RIGHT_SCORE
-			override val direction: ILegendPanel.Direction = ILegendPanel.Direction.RIGHT
-			override val legend: ILegend = scoreLegend
-		}
+		val scorePanel = RightScoreLegendPanel(scoreLegend)
 		panelList.add(scorePanel)
-		var viewsList = createLegendView(context,scoreLegend,paddings = Rect(paddingsM1, 0, paddingsM1, paddingsM1))
-		viewsList.first().newPadding(Rect(paddingsM1,paddingsM1,0,0))
+		var viewsList = createLegendView(context,scoreLegend, null)
 		views[scorePanel.id] = viewsList
 
 		//Right Place
 		val placeLegend = LabeledListLegend(table.size, context.getString(R.string.label_place))
-		val placePanel = object : ILegendPanel {
-			override val id: Int = ILegendPanel.RIGHT_PLACE
-			override val direction: ILegendPanel.Direction = ILegendPanel.Direction.RIGHT
-			override val legend: ILegend = placeLegend
-		}
+		val placePanel = RightPlaceLegendPanel(placeLegend)
 		panelList.add(placePanel)
-		viewsList =  createLegendView(context, placeLegend, paddings = Rect(paddingsM1, 0, paddingsM1, paddingsM1))
-		viewsList.first().newPadding(Rect(paddingsM1,paddingsM1,0,0))
+		viewsList =  createLegendView(context, placeLegend, null)
 		views[placePanel.id] =  viewsList
 
 
@@ -124,6 +100,8 @@ object TableLegendUtils {
 			setText(text)
 			gravity = Gravity.CENTER
 			paddings?.let { newPadding(it) }
+			//setBackgroundColor(Color.GRAY)
+			 setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.border))
 		}
 
 	private fun View.newPadding(paddings: Rect) {

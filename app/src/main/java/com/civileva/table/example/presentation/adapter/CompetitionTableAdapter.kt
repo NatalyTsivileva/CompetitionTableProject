@@ -13,7 +13,7 @@ import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Sorting
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.adapter.base.TableAdapter
-import com.civileva.table.example.presentation.legend.ILegendPanel
+import com.civileva.table.example.presentation.legend.base.ILegendPanel
 import com.civileva.table.example.utils.InputUtils
 
 class CompetitionTableAdapter(

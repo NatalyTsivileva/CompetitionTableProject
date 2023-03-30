@@ -1,7 +1,6 @@
 package com.civileva.table.example
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -9,7 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.presentation.adapter.CompetitionTableAdapter
-import com.civileva.table.example.presentation.legend.ILegendPanel
+import com.civileva.table.example.presentation.legend.base.ILegendPanel
 import com.civileva.table.example.utils.TableLegendUtils
 import com.civileva.table.example.utils.TableUtils
 import com.civileva.table.example.widget.TableView

@@ -7,11 +7,10 @@ import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.View
-import android.widget.Toast
 import com.civileva.table.example.data.Cursor
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.data.ITableCell
-import com.civileva.table.example.presentation.legend.ILegendPanel
+import com.civileva.table.example.presentation.legend.base.ILegendPanel
 
 /**
  * Адаптер для таблицы. T - тип данных в ячейках с данными, C - ячейки
@@ -24,7 +23,7 @@ abstract class TableAdapter<T:Comparable<T>, C:ITableCell<T>>(
 	attr: AttributeSet,
 	private val table: Table<T,C>,
 	private var legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>?
-) : ITableAdapter<T, C>, ILegendAdapter {
+) : ITableAdapter<T, C>, ILegendPanelAdapter {
 
 
 	fun setupTextColor(cellIndex: Int, isFailedInput: Boolean, ed: Editable?) {
