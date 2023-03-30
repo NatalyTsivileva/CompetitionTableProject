@@ -25,6 +25,7 @@ interface ILegendPanel {
 		const val TOP_ITER = 3
 		const val RIGHT_SCORE = 4
 		const val RIGHT_PLACE = 5
+		const val TEST = 6
 	}
 
 }

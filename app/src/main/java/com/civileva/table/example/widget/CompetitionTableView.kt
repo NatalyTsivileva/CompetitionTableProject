@@ -2,9 +2,9 @@ package com.civileva.table.example.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.presentation.adapter.base.ILegendPanelAdapter
+import com.civileva.table.example.presentation.legend.base.ILegendPanel
 import com.civileva.table.example.presentation.legend.base.LabeledListLegend
 
 open class CompetitionTableView(
@@ -12,24 +12,63 @@ open class CompetitionTableView(
 	attrs: AttributeSet,
 ) : TableView<Int, CellInteger>(context, attrs) {
 
-	override fun getTopOffset(panelsOffsets: ILegendPanelAdapter.PanelsOffsets?): Int {
-		var topOffset = super.getTopOffset(panelsOffsets)
 
-/*
+	override fun layoutRightLegends(adapter: ILegendPanelAdapter) {
+		var startX = measuredWidth - getRightOffset()
+		var startY = paddingTop
 
-		val adapter = tableAdapter as? ILegendPanelAdapter
-		if (adapter != null) {
-			val legendWithHeaderPanel = adapter.findLegendPanel(LabeledListLegend::class.java)
-			if (legendWithHeaderPanel != null) {
-				val panelHeight = legendWithHeaderPanel.panelSize.height
-				val itemsCountInPanel = legendWithHeaderPanel.legend.itemsCount
-				topOffset += (panelHeight / itemsCountInPanel)
+		adapter.getLegendPanels().forEach { panel ->
+
+			if (panel.direction == ILegendPanel.Direction.RIGHT) {
+
+				startY = if (panel.legend is LabeledListLegend) paddingTop else getTopOffset()
+
+				val panelWidth = panel.panelSize.width
+
+				adapter
+					.getLegendViews(panel.id)
+					.forEach { view ->
+						view.layout(startX,	startY,startX + panelWidth,startY + measuredHeight)
+						startY += view.measuredHeight
+						if (!view.isAttachedToWindow) addView(view)
+					}
+				startX += panelWidth
+				startY = if (panel.legend is LabeledListLegend) paddingTop else getTopOffset()
+			}
+
+		}
+	}
+
+
+	override fun layoutLeftLegends(adapter: ILegendPanelAdapter) {
+		var startX = paddingStart
+		var startY = paddingTop
+
+		adapter.getLegendPanels().forEach { panel ->
+
+			if (panel.direction == ILegendPanel.Direction.LEFT) {
+
+				startY = if(panel.legend is LabeledListLegend) paddingTop else getTopOffset()
+				val panelWidth = panel.panelSize.width
+
+				adapter
+					.getLegendViews(panel.id)
+					.forEach { view ->
+						view.layout(
+							startX,
+							startY,
+							startX + view.measuredWidth,
+							startY + measuredHeight
+						)
+						startY += view.measuredHeight
+						if (!view.isAttachedToWindow) addView(view)
+					}
+
+				startX += panelWidth
+				startY = if(panel.legend is LabeledListLegend) paddingTop else getTopOffset()
 			}
 		}
-*/
-
-
-		return topOffset
 	}
+
 
 }

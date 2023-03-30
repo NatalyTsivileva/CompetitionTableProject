@@ -8,7 +8,7 @@ import com.civileva.table.example.presentation.legend.base.IterationLegend
 data class LeftIterationLegendPanel(
 	val iterdLegend: IterationLegend,
 	val size: ILegendPanel.Size = ILegendPanel.Size.Undefined()
-) : BaseLegendPanel<IterationLabeledLegend>(
+) : BaseLegendPanel(
 	id = ILegendPanel.LEFT_ITER,
 	direction = ILegendPanel.Direction.LEFT,
 	legend = iterdLegend,

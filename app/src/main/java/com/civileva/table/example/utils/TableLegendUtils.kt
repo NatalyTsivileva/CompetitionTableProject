@@ -59,8 +59,18 @@ object TableLegendUtils {
 		val placeLegend = LabeledListLegend(table.size, context.getString(R.string.label_place))
 		val placePanel = RightPlaceLegendPanel(placeLegend)
 		panelList.add(placePanel)
-		viewsList =  createLegendView(context, placeLegend, null)
+
+		viewsList = createLegendView(context, placeLegend, null)
 		views[placePanel.id] =  viewsList
+
+
+
+
+		val testLegend = IterationLabeledLegend(table.size,"кеке")
+		val itTestPanel = TestIterationLegendPanel(testLegend)
+		panelList.add(itTestPanel)
+		views[itTestPanel.id] = createLegendView(context, testLegend, null)
+
 
 
 		return Pair(panelList, views)

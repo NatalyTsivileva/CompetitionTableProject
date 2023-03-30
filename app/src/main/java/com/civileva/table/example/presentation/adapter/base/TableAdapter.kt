@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import com.civileva.table.example.data.Cursor
 import com.civileva.table.example.data.ITableCell
@@ -61,6 +62,9 @@ abstract class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		return legendsPanels?.first ?: emptyList()
 	}
 
+	override fun getLegendPanel(panelId: Int): ILegendPanel? {
+		return legendsPanels?.first?.find { it.id==panelId }
+	}
 
 	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
 		return legendsPanels?.first?.filter { it.direction == direction } ?: emptyList()
@@ -75,42 +79,31 @@ abstract class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		return legendsPanels?.first?.find { it.legend.javaClass == legendClass }
 	}
 
-	override fun updateLegendPanel(panel: ILegendPanel) {
+	override fun updateLegendPanelSize(panel: ILegendPanel, size: ILegendPanel.Size) {
 		val panels = legendsPanels
 		if (panels != null) {
 			val panelsData = panels.first.toMutableList()
 			val panelsViewsMaps = panels.second
 
-			panelsData.replaceAll { p ->
-				if (p.id == panel.id) panel else p
-			}
-			legendsPanels = Pair(panelsData, panelsViewsMaps)
-		}
-	}
+			panelsData.replaceAll { oldPanel ->
+				val newPanel = if (oldPanel.id == panel.id) {
+					val viewsList = panelsViewsMaps[oldPanel.id]
+					viewsList?.forEach { view ->
+						if (size.width != 0 && size.height != 0) {
+							view.measure(size.width, size.height)
+						}
+					}
+					panel
+				} else {
+					oldPanel
+				}
 
-	override fun updateLegendPanels(panels: List<ILegendPanel>) {
-		val bindedPanels = legendsPanels
-
-		if (bindedPanels != null) {
-			val viewsMap = bindedPanels.second
-			legendsPanels = Pair(panels, viewsMap)
-		}
-	}
-
-	override fun updateLegendPanel(panel: ILegendPanel, views: List<View>) {
-		val panels = legendsPanels
-		if (panels != null) {
-			val panelsData = panels.first.toMutableList()
-			val panelsViewsMaps = panels.second.toMutableMap()
-
-			panelsData.replaceAll { p ->
-				val newPanel = if (p.id == panel.id) panel else p
-				panelsViewsMaps[newPanel.id] = views
 				newPanel
 			}
 			legendsPanels = Pair(panelsData, panelsViewsMaps)
 		}
 	}
+
 
 	override fun destroyLegendViews() {
 		legendsPanels = null

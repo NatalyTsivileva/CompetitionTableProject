@@ -5,7 +5,7 @@ import com.civileva.table.example.presentation.legend.base.*
 data class RightPlaceLegendPanel(
 	val labeledLegend: LabeledListLegend,
 	val size: ILegendPanel.Size = ILegendPanel.Size.Undefined()
-) : BaseLegendPanel<IterationLabeledLegend>(
+) : BaseLegendPanel(
 	id = ILegendPanel.RIGHT_PLACE,
 	direction = ILegendPanel.Direction.RIGHT,
 	legend = labeledLegend,

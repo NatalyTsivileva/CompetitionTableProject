@@ -1,6 +1,6 @@
 package com.civileva.table.example.presentation.legend.base
 
-abstract class BaseLegendPanel<T:ILegend>(
+abstract class BaseLegendPanel(
 	override val direction: ILegendPanel.Direction,
 	override val id: Int,
 	override val legend: ILegend,
