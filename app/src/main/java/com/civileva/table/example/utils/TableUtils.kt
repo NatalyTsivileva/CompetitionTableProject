@@ -13,10 +13,12 @@ object TableUtils {
 
 
 	private fun createCell(index: Int, tableSize: Int): CellInteger {
+		val rowN = if(tableSize>0) index / tableSize else 0
+		val colN = if(tableSize>0) index % tableSize else 0
 		return CellInteger(
 			index = index,
-			rowNumber = index / tableSize,
-			columnNumber = index % tableSize,
+			rowNumber = rowN,
+			columnNumber = colN,
 			tableSize = tableSize
 		)
 	}

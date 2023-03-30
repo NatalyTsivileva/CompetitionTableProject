@@ -1,6 +1,7 @@
 package com.civileva.table.example.utils
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
@@ -100,8 +101,8 @@ object TableLegendUtils {
 			setText(text)
 			gravity = Gravity.CENTER
 			paddings?.let { newPadding(it) }
-			//setBackgroundColor(Color.GRAY)
-			 setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.border))
+			setBackgroundColor(Color.GRAY)
+			// setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.border))
 		}
 
 	private fun View.newPadding(paddings: Rect) {
