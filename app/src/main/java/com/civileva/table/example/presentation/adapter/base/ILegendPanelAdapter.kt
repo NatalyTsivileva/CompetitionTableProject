@@ -8,8 +8,12 @@ interface ILegendPanelAdapter {
 	fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel>
 	fun getLegendViews(panelId: Int): List<View>
 	fun findLegendPanel(legendClass: Class<*>): ILegendPanel?
-
 	fun destroyLegendViews()
+
+
+	fun updateLegendPanel(panel: ILegendPanel)
+	fun updateLegendPanel(panel: ILegendPanel, views:List<View>)
+	fun updateLegendPanels(panels: List<ILegendPanel>)
 
 
 	fun measureAllPanels(): PanelsOffsets {
@@ -51,11 +55,11 @@ interface ILegendPanelAdapter {
 			}
 		}
 
-		return params
+		return params.copy(measuredPanels = measuredPanels)
 	}
 
 
-	 fun measurePanel(panel: ILegendPanel): ILegendPanel {
+	fun measurePanel(panel: ILegendPanel): ILegendPanel {
 		var panelWidth = UNDEFINED_SIZE
 		var panelHeight = UNDEFINED_SIZE
 
@@ -66,22 +70,24 @@ interface ILegendPanelAdapter {
 
 			when (panel.direction) {
 				ILegendPanel.Direction.TOP, ILegendPanel.Direction.BOTTOM -> {
-					if (panelHeight == UNDEFINED_SIZE) panelHeight = view.measuredHeight
+					if (view.measuredHeight>panelHeight) panelHeight = view.measuredHeight
 					panelWidth += view.measuredWidth
 				}
 
 				ILegendPanel.Direction.LEFT, ILegendPanel.Direction.RIGHT -> {
-					if (panelWidth == UNDEFINED_SIZE) panelWidth = view.measuredWidth
+					if (view.measuredWidth>panelWidth) panelWidth = view.measuredWidth
 					panelHeight += view.measuredHeight
 				}
 			}
 		}
 
-        val size = ILegendPanel.Size(width = panelWidth, height = panelHeight)
+		val size = ILegendPanel.Size(width = panelWidth, height = panelHeight)
 		return panel.updateSize(size)
 	}
 
 	data class PanelsOffsets(
+		val measuredPanels: List<ILegendPanel> = emptyList(),
+
 		val topPanelCount: Int = UNDEFINED_SIZE,
 		val leftPanelCount: Int = UNDEFINED_SIZE,
 		val rightPanelCount: Int = UNDEFINED_SIZE,

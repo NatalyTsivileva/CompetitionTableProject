@@ -8,8 +8,8 @@ import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.View
 import com.civileva.table.example.data.Cursor
-import com.civileva.table.example.data.Table
 import com.civileva.table.example.data.ITableCell
+import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.legend.base.ILegendPanel
 
 /**
@@ -18,10 +18,10 @@ import com.civileva.table.example.presentation.legend.base.ILegendPanel
  * @param legendsPanels  пара, где первый элемент - список с панелями легенд,
  * второй - карта вида <PanelID, ListOfViewForPanel> (список вьюх для каждой панели)
  */
-abstract class TableAdapter<T:Comparable<T>, C:ITableCell<T>>(
+abstract class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	context: Context,
 	attr: AttributeSet,
-	private val table: Table<T,C>,
+	private val table: Table<T, C>,
 	private var legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>?
 ) : ITableAdapter<T, C>, ILegendPanelAdapter {
 
@@ -37,7 +37,7 @@ abstract class TableAdapter<T:Comparable<T>, C:ITableCell<T>>(
 	}
 
 
-	fun aggregateRowSum(rowNumber: Int): Cursor<T,C> {
+	fun aggregateRowSum(rowNumber: Int): Cursor<T, C> {
 		return table.getCursor(rowNumber)
 	}
 
@@ -58,20 +58,58 @@ abstract class TableAdapter<T:Comparable<T>, C:ITableCell<T>>(
 
 
 	override fun getLegendPanels(): List<ILegendPanel> {
-		return legendsPanels?.first?: emptyList()
+		return legendsPanels?.first ?: emptyList()
 	}
 
+
 	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
-		return legendsPanels?.first?.filter { it.direction == direction }?: emptyList()
+		return legendsPanels?.first?.filter { it.direction == direction } ?: emptyList()
 	}
 
 	override fun getLegendViews(panelId: Int): List<View> {
-		return legendsPanels?.second?.get(panelId)?:emptyList()
+		return legendsPanels?.second?.get(panelId) ?: emptyList()
 	}
 
 
 	override fun findLegendPanel(legendClass: Class<*>): ILegendPanel? {
 		return legendsPanels?.first?.find { it.legend.javaClass == legendClass }
+	}
+
+	override fun updateLegendPanel(panel: ILegendPanel) {
+		val panels = legendsPanels
+		if (panels != null) {
+			val panelsData = panels.first.toMutableList()
+			val panelsViewsMaps = panels.second
+
+			panelsData.replaceAll { p ->
+				if (p.id == panel.id) panel else p
+			}
+			legendsPanels = Pair(panelsData, panelsViewsMaps)
+		}
+	}
+
+	override fun updateLegendPanels(panels: List<ILegendPanel>) {
+		val bindedPanels = legendsPanels
+
+		if (bindedPanels != null) {
+			val viewsMap = bindedPanels.second
+			legendsPanels = Pair(panels, viewsMap)
+		}
+	}
+
+	override fun updateLegendPanel(panel: ILegendPanel, views: List<View>) {
+		val panels = legendsPanels
+		if (panels != null) {
+			val panelsData = panels.first.toMutableList()
+			val panelsViewsMaps = panels.second.toMutableMap()
+
+			panelsData.replaceAll { p ->
+				val newPanel = if (p.id == panel.id) panel else p
+				panelsViewsMaps[newPanel.id] = views
+				newPanel
+			}
+			legendsPanels = Pair(panelsData, panelsViewsMaps)
+		}
 	}
 
 	override fun destroyLegendViews() {
