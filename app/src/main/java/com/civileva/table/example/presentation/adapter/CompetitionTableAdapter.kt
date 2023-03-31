@@ -12,7 +12,7 @@ import androidx.core.widget.addTextChangedListener
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Sorting
 import com.civileva.table.example.data.Table
-import com.civileva.table.example.presentation.adapter.base.TableAdapter
+import com.civileva.table.example.presentation.adapter.base.TableLegendAdapter
 import com.civileva.table.example.presentation.legend.base.ILegendPanel
 import com.civileva.table.example.utils.InputUtils
 
@@ -21,7 +21,7 @@ class CompetitionTableAdapter(
 	private val attr: AttributeSet,
 	private val table: Table<Int, CellInteger>,
 	legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>
-) : TableAdapter<Int, CellInteger>(context, attr, table, legendsPanels) {
+) : TableLegendAdapter<Int,CellInteger>(context, attr, table, legendsPanels) {
 
 	private val tableViews: ArrayList<View> = ArrayList(table.elementCount)
 

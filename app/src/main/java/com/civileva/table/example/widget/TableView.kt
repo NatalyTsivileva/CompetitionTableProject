@@ -23,7 +23,6 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 			invalidate()
 		}
 
-	private var borders: ILegendPanelAdapter.MeasuredPanelsBorders? = null
 
 	override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -53,7 +52,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 		measuredParentWidth: Int
 	) {
 
-		borders = adapter.measureLegendPanels()
+		//borders = adapter.measureLegendPanels()
 		 resizePanelsViews(
 			adapter,
 			availableHeight = getContentAreaHeight(measuredParentHeight),
@@ -66,32 +65,23 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 		availableWidth: Int,
 		availableHeight: Int
 	) {
-
 		adapter.getLegendPanels().forEach { panel ->
-			var widthSpec: Int = MeasureSpec.UNSPECIFIED
-			var heightSpec: Int = MeasureSpec.UNSPECIFIED
+			//measure wrap content height
+			adapter.updateLegendPanelSize(panel, ILegendPanel.Size(0,0))
 
-			when (panel.direction) {
-				ILegendPanel.Direction.TOP, ILegendPanel.Direction.BOTTOM -> {
-					val newWidth = ceil(availableWidth.toFloat() / panel.legend.itemsCount)
 
-					widthSpec = MeasureSpec.makeMeasureSpec(newWidth.toInt(), MeasureSpec.EXACTLY)
-					heightSpec = MeasureSpec.makeMeasureSpec(panel.panelSize.height, MeasureSpec.EXACTLY)
+			val panelSize=when(panel.direction){
+				ILegendPanel.Direction.TOP,ILegendPanel.Direction.BOTTOM -> {
+					ILegendPanel.Size(width=availableWidth,height=panel.panelSize.height)
 				}
 
-				ILegendPanel.Direction.LEFT, ILegendPanel.Direction.RIGHT -> {
-					val newHeight = ceil(availableHeight.toFloat() / panel.legend.itemsCount)
-
-					widthSpec = MeasureSpec.makeMeasureSpec(panel.panelSize.width, MeasureSpec.EXACTLY)
-					heightSpec = MeasureSpec.makeMeasureSpec(newHeight.toInt(), MeasureSpec.EXACTLY)
+				ILegendPanel.Direction.LEFT, ILegendPanel.Direction.RIGHT->{
+					ILegendPanel.Size(height=availableHeight, width = panel.panelSize.width)
 				}
 			}
 
-			adapter.getLegendViews(panel.id).forEach { view ->
-				view.measure(widthSpec, heightSpec)
-			}
-		}
-	}
+			adapter.updateLegendPanelSize(panel, panelSize)
+	}}
 
 	private fun measureCell(
 		adapter: ITableAdapter<T, C>,
@@ -141,7 +131,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 	open fun layoutTopLegends(
 		adapter: ILegendPanelAdapter
 	) {
-		var startX = getLeftOffset()
+		var startX = getLeftPanelsWidth()
 		var startY = paddingTop
 
 
@@ -164,7 +154,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 						if (!view.isAttachedToWindow) addView(view)
 					}
 				startY += panelHeight
-				startX = getLeftOffset()
+				startX = getLeftPanelsWidth()
 			}
 		}
 	}
@@ -173,7 +163,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 		adapter: ILegendPanelAdapter
 	) {
 		var startX = paddingStart
-		var startY = getTopOffset()
+		var startY = getTopPanelsHeight()
 
 		adapter.getLegendPanels().forEach { panel ->
 			if (panel.direction == ILegendPanel.Direction.LEFT) {
@@ -193,7 +183,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 					}
 
 				startX += panelWidth
-				startY = getTopOffset()
+				startY = getTopPanelsHeight()
 			}
 		}
 	}
@@ -201,8 +191,8 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 	protected open fun layoutRightLegends(
 		adapter: ILegendPanelAdapter
 	) {
-		var startX = measuredWidth - getRightOffset()
-		var startY = getTopOffset()
+		var startX = measuredWidth - getRightPanelsWidth()
+		var startY = getTopPanelsHeight()
 
 		adapter.getLegendPanels().forEach { panel ->
 			if (panel.direction == ILegendPanel.Direction.RIGHT) {
@@ -216,7 +206,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 						if (!view.isAttachedToWindow) addView(view)
 					}
 				startX += panelWidth
-				startY = getTopOffset()
+				startY = getTopPanelsHeight()
 			}
 		}
 	}
@@ -224,8 +214,8 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 	protected open fun layoutBottomLegends(
 		adapter: ILegendPanelAdapter
 	) {
-		var startX = getLeftOffset()
-		var startY = measuredHeight - getBottomOffset()
+		var startX = getLeftPanelsWidth()
+		var startY = measuredHeight - getBottomPanelsHeight()
 
 		adapter.getLegendPanels().forEach { panel ->
 			if (panel.direction == ILegendPanel.Direction.BOTTOM) {
@@ -239,7 +229,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 						if (!view.isAttachedToWindow) addView(view)
 					}
 				startX += panelHeight
-				startY = measuredHeight - getBottomOffset()
+				startY = measuredHeight - getBottomPanelsHeight()
 			}
 
 		}
@@ -248,8 +238,8 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 		val adapter = tableAdapter
 
 		if (adapter != null) {
-			var startX = getLeftOffset()
-			var startY = getTopOffset()
+			var startX = getLeftPanelsWidth()
+			var startY = getTopPanelsHeight()
 
 			val data = adapter.getTableData()
 			val viewCount = adapter.getTableViews().count()
@@ -262,7 +252,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 
 					if (d.isNewRow()) {
 						startY += viewHeight
-						startX = getLeftOffset()
+						startX = getLeftPanelsWidth()
 					} else {
 						if (!d.isFirst())
 							startX += viewWidth
@@ -278,22 +268,22 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 		}
 	}
 
-	open fun getLeftOffset() = (borders?.leftPanelsWidth?: 0) + paddingStart
-	open fun getRightOffset() = (borders?.rightPanelsWidth?: 0) + paddingEnd
-	open fun getTopOffset() = (borders?.topPanelsHeight?:0) + paddingTop
-	open fun getBottomOffset() = (borders?.bottomPanelsHeight?: 0) + paddingBottom
-
+	open fun getLeftPanelsWidth() = (tableAdapter as? ILegendPanelAdapter)?.getLegendPanels(ILegendPanel.Direction.LEFT)?.sumOf { it.panelSize.width }?:0
+	open fun getRightPanelsWidth() = (tableAdapter as? ILegendPanelAdapter)?.getLegendPanels(ILegendPanel.Direction.RIGHT)?.sumOf { it.panelSize.width }?:0
+	open fun getTopPanelsHeight() = (tableAdapter as? ILegendPanelAdapter)?.getLegendPanels(ILegendPanel.Direction.TOP)?.sumOf { it.panelSize.height }?:0
+	open fun getBottomPanelsHeight() = (tableAdapter as? ILegendPanelAdapter)?.getLegendPanels(ILegendPanel.Direction.BOTTOM)?.sumOf { it.panelSize.height }?:0
+	open fun getTopPanelItemCount() =(tableAdapter as? ILegendPanelAdapter)?.getLegendPanels(ILegendPanel.Direction.TOP)?.count()
 
 	private fun getContentAreaWidth(
 		parentWidth: Int
 	): Int {
-		return parentWidth - getLeftOffset() - getRightOffset()
+		return parentWidth - getLeftPanelsWidth() - getRightPanelsWidth()
 	}
 
 	private fun getContentAreaHeight(
 		parentHeight: Int
 	): Int {
-		return parentHeight - getTopOffset() - getBottomOffset()
+		return parentHeight - getTopPanelsHeight() - getBottomPanelsHeight()
 	}
 
 	fun release() {
@@ -301,5 +291,5 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 		tableAdapter?.destroyTableViews()
 		(tableAdapter as? ILegendPanelAdapter)?.destroyLegendViews()
 	}
-	fun getPanelBorders() = borders
+	fun getPanelBorders() = ILegendPanelAdapter.MeasuredPanelsBorders()
 }

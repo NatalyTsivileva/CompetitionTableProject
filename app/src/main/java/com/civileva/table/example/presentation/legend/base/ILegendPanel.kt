@@ -7,7 +7,7 @@ interface ILegendPanel {
 	val panelSize: Size
 	fun updateSize(size: Size):ILegendPanel
 	data class Size(val width: Int, val height: Int) {
-		fun isUndefined() = width == 0 && height == 0
+		fun isUndefined() = width == 0 || height == 0
 
 		companion object {
 			fun Undefined() = Size(0, 0)

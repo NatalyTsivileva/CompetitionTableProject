@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import com.civileva.table.example.data.Cursor
 import com.civileva.table.example.data.ITableCell
@@ -19,12 +18,12 @@ import com.civileva.table.example.presentation.legend.base.ILegendPanel
  * @param legendsPanels  пара, где первый элемент - список с панелями легенд,
  * второй - карта вида <PanelID, ListOfViewForPanel> (список вьюх для каждой панели)
  */
-abstract class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
+open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	context: Context,
 	attr: AttributeSet,
 	private val table: Table<T, C>,
 	private var legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>?
-) : ITableAdapter<T, C>, ILegendPanelAdapter {
+) : ITableAdapter<T, C> {
 
 
 	fun setupTextColor(cellIndex: Int, isFailedInput: Boolean, ed: Editable?) {
@@ -50,6 +49,18 @@ abstract class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		return table.getCell(index)
 	}
 
+	override fun getTableViews(): ArrayList<View> {
+		throw NotImplementedError("Override for bind table data with its views")
+	}
+
+	override fun getTableView(index: Int): View {
+		throw NotImplementedError("Override for get data from bound table view")
+	}
+
+	override fun destroyTableViews() {
+		throw NotImplementedError("Override for destroy table views ")
+	}
+
 	/**
 	 * return size of matrix. for example for 3x3(9) return 3
 	 **/
@@ -58,54 +69,4 @@ abstract class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	}
 
 
-	override fun getLegendPanels(): List<ILegendPanel> {
-		return legendsPanels?.first ?: emptyList()
-	}
-
-	override fun getLegendPanel(panelId: Int): ILegendPanel? {
-		return legendsPanels?.first?.find { it.id==panelId }
-	}
-
-	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
-		return legendsPanels?.first?.filter { it.direction == direction } ?: emptyList()
-	}
-
-	override fun getLegendViews(panelId: Int): List<View> {
-		return legendsPanels?.second?.get(panelId) ?: emptyList()
-	}
-
-
-	override fun findLegendPanel(legendClass: Class<*>): ILegendPanel? {
-		return legendsPanels?.first?.find { it.legend.javaClass == legendClass }
-	}
-
-	override fun updateLegendPanelSize(panel: ILegendPanel, size: ILegendPanel.Size) {
-		val panels = legendsPanels
-		if (panels != null) {
-			val panelsData = panels.first.toMutableList()
-			val panelsViewsMaps = panels.second
-
-			panelsData.replaceAll { oldPanel ->
-				val newPanel = if (oldPanel.id == panel.id) {
-					val viewsList = panelsViewsMaps[oldPanel.id]
-					viewsList?.forEach { view ->
-						if (size.width != 0 && size.height != 0) {
-							view.measure(size.width, size.height)
-						}
-					}
-					panel
-				} else {
-					oldPanel
-				}
-
-				newPanel
-			}
-			legendsPanels = Pair(panelsData, panelsViewsMaps)
-		}
-	}
-
-
-	override fun destroyLegendViews() {
-		legendsPanels = null
-	}
 }
