@@ -111,8 +111,9 @@ object TableLegendUtils {
 			setText(text)
 			gravity = Gravity.CENTER
 			paddings?.let { newPadding(it) }
-			setBackgroundColor(Color.GRAY)
-			// setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.border))
+			setTextColor(context.getColor(R.color.teal_700))
+			//setBackgroundColor(Color.GRAY)
+			 setBackgroundDrawable(ContextCompat.getDrawable(context,R.drawable.border))
 		}
 
 	private fun View.newPadding(paddings: Rect) {

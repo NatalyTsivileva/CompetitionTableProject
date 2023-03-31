@@ -176,7 +176,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 							startX,
 							startY,
 							startX + view.measuredWidth,
-							startY + measuredHeight
+							startY + view.measuredHeight
 						)
 						startY += view.measuredHeight
 						if (!view.isAttachedToWindow) addView(view)
@@ -201,7 +201,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 				adapter
 					.getLegendViews(panel.id)
 					.forEach { view ->
-						view.layout(startX, startY, startX + panelWidth, startY + measuredHeight)
+						view.layout(startX, startY, startX + panelWidth, startY + view.measuredHeight)
 						startY += view.measuredHeight
 						if (!view.isAttachedToWindow) addView(view)
 					}
@@ -228,8 +228,8 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 						startX += view.measuredWidth
 						if (!view.isAttachedToWindow) addView(view)
 					}
-				startX += panelHeight
-				startY = measuredHeight - getBottomPanelsHeight()
+				startX = getLeftPanelsWidth()
+				startY += panelHeight
 			}
 
 		}

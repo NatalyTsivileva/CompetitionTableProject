@@ -19,6 +19,7 @@ open class CompetitionTableView(
 		availableWidth: Int,
 		availableHeight: Int
 	) {
+		super.resizePanelsViews(adapter, availableWidth, availableHeight)
 /*
 
 		adapter.getLegendPanels().forEach { panel ->

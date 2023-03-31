@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Sorting
@@ -15,6 +16,7 @@ import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.adapter.base.TableLegendAdapter
 import com.civileva.table.example.presentation.legend.base.ILegendPanel
 import com.civileva.table.example.utils.InputUtils
+import com.civileva.table.test.R
 
 class CompetitionTableAdapter(
 	private val context: Context,
@@ -46,6 +48,8 @@ class CompetitionTableAdapter(
 		view.hint = "X"
 		view.isFocusableInTouchMode = true
 		view.gravity = Gravity.CENTER
+		view.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.border))
+
 
 		view.addTextChangedListener {
 			processInput(cellInteger, it)
