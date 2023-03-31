@@ -20,28 +20,23 @@ open class CompetitionTableView(
 		availableHeight: Int
 	) {
 		super.resizePanelsViews(adapter, availableWidth, availableHeight)
-/*
+		val topPanelSize = getTopPanelsHeight()
 
-		adapter.getLegendPanels().forEach { panel ->
-			//measure wrap content height
-			adapter.updateLegendPanelSize(panel, ILegendPanel.Size(0, 0))
-
+		adapter.getLegendPanels().forEachIndexed { index, panel ->
 			if (panel.legend is LabeledListLegend) {
-				val topPanelsSize = getTopPanelsHeight()
+				val firstView = adapter.getLegendViews(panel.id).firstOrNull()
+				val firstHeight = firstView?.measuredHeight ?: 0
 
-				if (panel.panelSize.height > topPanelsSize) {
+				if (topPanelSize > 0) {
+					val wSpec = MeasureSpec.makeMeasureSpec(panel.panelSize.width, MeasureSpec.EXACTLY)
+					val hSpec = MeasureSpec.makeMeasureSpec( topPanelSize , MeasureSpec.EXACTLY)
+					firstView?.measure(wSpec,hSpec)
 				} else {
-					val topPanelSize = topPanelsSize / panel.legend.itemsCount
-					adapter.updateLegendPanelSize(
-						panel,
-						ILegendPanel.Size(width = panel.panelSize.width, height = topPanelSize)
-					)
-
+					panel.updateSize(ILegendPanel.Size(availableWidth,availableHeight-firstHeight))
 				}
-			}*/
-	//	}
+			}
+		}
 	}
-
 
 	override fun layoutRightLegends(adapter: ILegendPanelAdapter) {
 		var startX = measuredWidth - getRightPanelsWidth()
@@ -58,7 +53,12 @@ open class CompetitionTableView(
 				adapter
 					.getLegendViews(panel.id)
 					.forEach { view ->
-						view.layout(startX, startY, startX + panelWidth, startY + measuredHeight)
+						view.layout(
+							startX,
+							startY,
+							startX + panelWidth,
+							startY + view.measuredHeight
+						)
 						startY += view.measuredHeight
 						if (!view.isAttachedToWindow) addView(view)
 					}
@@ -88,7 +88,7 @@ open class CompetitionTableView(
 							startX,
 							startY,
 							startX + view.measuredWidth,
-							startY + measuredHeight
+							startY + view.measuredHeight
 						)
 						startY += view.measuredHeight
 						if (!view.isAttachedToWindow) addView(view)

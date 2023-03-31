@@ -3,6 +3,8 @@
 	<string name="label_competing">Участник</string>
 	<string name="label_score">Сумма очков</string>
 	<string name="label_place">Место</string>
+	<string name="label_apponent">VS</string>
+
 
 	<string name="menu_legend_only_iter">Легенды-итераторы</string>
 	<string name="menu_legend_full">Все легенды</string>

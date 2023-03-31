@@ -1,7 +1,6 @@
 package com.civileva.table.example.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
@@ -66,10 +65,12 @@ object TableLegendUtils {
 
 
 
-		val testLegend = IterationLabeledLegend(table.size,"кеке")
+
+		val testLegend = IterationLabeledLegend(table.size,context.getString(R.string.label_apponent))
 		val itTestPanel = TestIterationLegendPanel(testLegend)
 		panelList.add(itTestPanel)
 		views[itTestPanel.id] = createLegendView(context, testLegend, null)
+
 
 
 
