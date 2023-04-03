@@ -1,8 +1,8 @@
-package com.civileva.table.example.presentation.legend
+package com.civileva.table.example.presentation.implementations.legends.panels
 
-import com.civileva.table.example.presentation.legend.base.BaseLegendPanel
-import com.civileva.table.example.presentation.legend.base.ILegendPanel
-import com.civileva.table.example.presentation.legend.base.IterationLabeledLegend
+import com.civileva.table.example.presentation.base.legends.BaseLegendPanel
+import com.civileva.table.example.presentation.base.legends.ILegendPanel
+import com.civileva.table.example.presentation.implementations.legends.items.IterationLabeledLegend
 
 data class LeftCompetitionLegendPanel(
 	val iterLabeledLegend: IterationLabeledLegend,

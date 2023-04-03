@@ -1,4 +1,4 @@
-package com.civileva.table.example.presentation.legend.base
+package com.civileva.table.example.presentation.base.legends
 
 abstract class BaseLegendPanel(
 	override val direction: ILegendPanel.Direction,

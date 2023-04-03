@@ -6,17 +6,16 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.civileva.table.example.data.CellInteger
-import com.civileva.table.example.presentation.adapter.CompetitionTableAdapter
-import com.civileva.table.example.presentation.legend.base.ILegendPanel
-import com.civileva.table.example.utils.TableLegendUtils
+import com.civileva.table.example.presentation.base.legends.ILegendPanel
+import com.civileva.table.example.presentation.implementations.adapter.CompetitionLegendTableAdapter
+import com.civileva.table.example.presentation.widget.LegendHeaderTableView
+import com.civileva.table.example.utils.TableAdapterUtils
 import com.civileva.table.example.utils.TableUtils
-import com.civileva.table.example.widget.TableView
 import com.civileva.table.test.R
 
 class MainActivity : AppCompatActivity() {
 	private var tableSize = 7
-	private var tableView: TableView<Int, CellInteger>? = null
+	private var tableView: LegendHeaderTableView? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 			}
 
 			R.id.menuTableDelete -> {
-				tableView?.release()
+				//tableView?.release()
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
@@ -89,17 +88,13 @@ class MainActivity : AppCompatActivity() {
 
 		val tableData = TableUtils.createIntegerTable(size)
 
-		val legendPanel =
-			TableLegendUtils.createCompetitionLegendPanel(applicationContext, tableData)
-
+		val legendPanelHolders = TableAdapterUtils.createLegendsHolderMap(applicationContext, tableData)
+		val cellHolders = TableAdapterUtils.createCellHolders(applicationContext, tableData.size)
 
 		tableView?.apply {
-			tableAdapter = CompetitionTableAdapter(
-				applicationContext,
-				attrs,
-				tableData,
-				excludePanels(legendPanel.first, legendPanel.second, excludePanelsIds)
-			)
+			val compAdapter = CompetitionLegendTableAdapter(tableData, cellHolders, legendPanelHolders)
+			setLegendAdapter(compAdapter)
+			setCellAdapter(compAdapter)
 		}
 	}
 

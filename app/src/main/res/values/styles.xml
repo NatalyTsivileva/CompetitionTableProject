@@ -4,4 +4,20 @@
 	<style name="CompetitionTableStyle" parent="Widget.AppCompat.EditText">
 		<item name="android:maxLength">1</item>
 	</style>
+
+	<style name="InputCellStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+		<item name="boxStrokeWidth">0dp</item>
+		<item name="boxStrokeWidthFocused">0dp</item>
+		<item name="android:drawablePadding">0dp</item>
+		<item name="hintTextAppearance">@style/InputCellHint</item>
+	</style>
+
+	<style name="InputCellHint" parent="TextAppearance.AppCompat.Caption">
+          <item name="android:drawablePadding">0dp</item>
+		<item name="android:gravity">center</item>
+	</style>
+
+	<style name="LegendStyle" parent="Widget.AppCompat.TextView">
+		<item name="android:gravity">center</item>
+	</style>
 </resources>

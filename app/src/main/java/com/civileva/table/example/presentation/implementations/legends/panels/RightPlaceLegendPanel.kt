@@ -1,7 +1,8 @@
-package com.civileva.table.example.presentation.legend
+package com.civileva.table.example.presentation.implementations.legends.panels
 
-import com.civileva.table.example.presentation.legend.base.*
-
+import com.civileva.table.example.presentation.base.legends.BaseLegendPanel
+import com.civileva.table.example.presentation.base.legends.ILegendPanel
+import com.civileva.table.example.presentation.implementations.legends.items.LabeledListLegend
 data class RightPlaceLegendPanel(
 	val labeledLegend: LabeledListLegend,
 	val size: ILegendPanel.Size = ILegendPanel.Size.Undefined()

@@ -1,16 +1,14 @@
-package com.civileva.table.example.presentation.adapter.base
+package com.civileva.table.example.presentation.implementations.adapter
 
-import android.content.Context
 import android.graphics.Color
 import android.text.Editable
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
-import android.util.AttributeSet
-import android.view.View
 import com.civileva.table.example.data.Cursor
 import com.civileva.table.example.data.ITableCell
 import com.civileva.table.example.data.Table
-import com.civileva.table.example.presentation.legend.base.ILegendPanel
+import com.civileva.table.example.presentation.base.adapter.ITableAdapter
+import com.civileva.table.example.presentation.base.holders.ITableViewHolder
 
 /**
  * Адаптер для таблицы. T - тип данных в ячейках с данными, C - ячейки
@@ -19,12 +17,25 @@ import com.civileva.table.example.presentation.legend.base.ILegendPanel
  * второй - карта вида <PanelID, ListOfViewForPanel> (список вьюх для каждой панели)
  */
 open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
-	context: Context,
-	attr: AttributeSet,
 	private val table: Table<T, C>,
-	private var legendsPanels: Pair<List<ILegendPanel>, Map<Int, List<View>>>?
+	cellHoldersList: List<ITableViewHolder<T, C>>
 ) : ITableAdapter<T, C> {
 
+	private var cellHolders: MutableList<ITableViewHolder<T, C>> = cellHoldersList.toMutableList()
+
+	init {
+			bindHolders(cellHolders)
+	}
+
+	private fun bindHolders(holders: List<ITableViewHolder<T, C>>) {
+		holders.forEachIndexed { index, iTableViewHolder ->
+			if (index < table.size * table.size) {
+				val cell = table.getCells()[index]
+				iTableViewHolder.bindData(cell)
+			}
+		}
+
+	}
 
 	fun setupTextColor(cellIndex: Int, isFailedInput: Boolean, ed: Editable?) {
 		val isNotValidScore = !table.getCell(cellIndex).hasValidData()
@@ -49,16 +60,17 @@ open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		return table.getCell(index)
 	}
 
-	override fun getTableViews(): ArrayList<View> {
-		throw NotImplementedError("Override for bind table data with its views")
+	override fun getTableHolder(cell: ITableCell<T>): ITableViewHolder<T, C>? {
+		val index = table.getCells().indexOf(cell)
+		return if (index != -1 && cellHolders.count() > index) {
+			cellHolders[index]
+		} else {
+			null
+		}
 	}
 
-	override fun getTableView(index: Int): View {
-		throw NotImplementedError("Override for get data from bound table view")
-	}
-
-	override fun destroyTableViews() {
-		throw NotImplementedError("Override for destroy table views ")
+	override fun getTableHolders(): List<ITableViewHolder<T, C>> {
+		return cellHolders
 	}
 
 	/**
@@ -67,6 +79,5 @@ open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	override fun getTableSize(): Int {
 		return table.size
 	}
-
 
 }

@@ -13,4 +13,6 @@
 	<string name="menu_table_10x10">Table 10x10</string>
 	<string name="menu_table_delete">Clean up</string>
 
+	<string name="inputCellHint" translatable="false">X</string>
+
 </resources>

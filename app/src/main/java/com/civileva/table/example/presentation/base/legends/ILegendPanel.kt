@@ -1,16 +1,18 @@
-package com.civileva.table.example.presentation.legend.base
+package com.civileva.table.example.presentation.base.legends
 
 interface ILegendPanel {
 	val id: Int
 	val direction: Direction
 	val legend: ILegend
 	val panelSize: Size
-	fun updateSize(size: Size):ILegendPanel
+	fun updateSize(size: Size): ILegendPanel
+
 	data class Size(val width: Int, val height: Int) {
-		fun isUndefined() = width == 0 || height == 0
+		fun isUndefined() = width == UNDEFINED_SIZE || height == UNDEFINED_SIZE
 
 		companion object {
-			fun Undefined() = Size(0, 0)
+			const val UNDEFINED_SIZE = 0
+			fun Undefined() = Size(UNDEFINED_SIZE, UNDEFINED_SIZE)
 		}
 	}
 
