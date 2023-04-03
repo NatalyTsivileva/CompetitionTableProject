@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 		val tableData = TableUtils.createIntegerTable(size)
 
 		val legendPanelHolders = TableAdapterUtils.createLegendsHolderMap(applicationContext, tableData)
-		val cellHolders = TableAdapterUtils.createCellHolders(applicationContext, tableData.size)
+		val cellHolders = TableUtils.createCellHolders(tableData,applicationContext)
 
 		tableView?.apply {
 			val compAdapter = CompetitionLegendTableAdapter(tableData, cellHolders, legendPanelHolders)
