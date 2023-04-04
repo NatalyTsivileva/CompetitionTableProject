@@ -25,8 +25,6 @@ open class LegendTableView<T : Comparable<T>, C : ITableCell<T>>(
 
 	fun setCellAdapter(adapter: ITableAdapter<T, C>) {
 		super.setTableAdapter(adapter)
-		requestLayout()
-		invalidate()
 	}
 
 	fun getCellAdapter() = super.getTableAdapter()
@@ -263,8 +261,10 @@ open class LegendTableView<T : Comparable<T>, C : ITableCell<T>>(
 		return parentHeight - getTopPanelsHeight() - getBottomPanelsHeight()
 	}
 
-	/*fun release() {
-	removeAllViews()
-	tableAdapter?.destroyTableViews()
-	(tableAdapter as? ILegendPanelAdapter)?.destroyLegendViews()*/
+	override fun clear() {
+		super.clear()
+		legendAdapter?.releaseLegendPanelViewHolders()
+		removeAllViews()
+	}
+
 }

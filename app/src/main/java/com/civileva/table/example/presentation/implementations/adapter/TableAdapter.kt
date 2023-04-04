@@ -1,9 +1,5 @@
 package com.civileva.table.example.presentation.implementations.adapter
 
-import android.graphics.Color
-import android.text.Editable
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
 import com.civileva.table.example.data.Cursor
 import com.civileva.table.example.data.ITableCell
 import com.civileva.table.example.data.Table
@@ -18,7 +14,7 @@ import com.civileva.table.example.presentation.base.listener.ITableClickListener
  * второй - карта вида <PanelID, ListOfViewForPanel> (список вьюх для каждой панели)
  */
 open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
-	private val table: Table<T, C>,
+	private var table: Table<T, C>,
 	cellHoldersList: List<ITableViewHolder<T, C>>,
 	listener:ITableClickListener<T,C>
 ) : ITableAdapter<T, C> {
@@ -70,6 +66,13 @@ open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	 **/
 	override fun getTableSize(): Int {
 		return table.size
+	}
+
+	override fun releaseTableDataViewHolders() {
+		cellHolders.forEach {
+			it.destroyView()
+		}
+		cellHolders = mutableListOf()
 	}
 
 }

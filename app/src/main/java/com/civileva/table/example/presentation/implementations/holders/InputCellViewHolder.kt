@@ -22,7 +22,12 @@ class InputCellViewHolder(
 	@LayoutRes private val cellLayout: Int = R.layout.item_cell_input,
 	@LayoutRes private val blockedCellLayout: Int = R.layout.item_cell_blocked
 ) : ITableViewHolder<Int, CellInteger> {
+
 	private var view: View? = null
+
+	override fun destroyView() {
+		view = null
+	}
 
 	override fun getTableView(cell: CellInteger): View {
 		val tempOldView = view
@@ -80,4 +85,5 @@ class InputCellViewHolder(
 			ForegroundColorSpan(color), 0, ed.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE
 		)
 	}
+
 }

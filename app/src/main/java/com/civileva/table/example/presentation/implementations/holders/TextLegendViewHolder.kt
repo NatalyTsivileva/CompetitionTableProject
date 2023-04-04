@@ -20,6 +20,10 @@ open class TextLegendViewHolder(
 		return views
 	}
 
+	override fun destroyView() {
+		views.clear()
+	}
+
 	override fun bindPanelData(data: List<*>) {
 		for (i: Int in 0 until data.count()) {
 			val itemData = data[i]

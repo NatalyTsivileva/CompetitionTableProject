@@ -11,4 +11,6 @@ interface ITableAdapter<T : Comparable<T>, C : ITableCell<T>> {
 	fun getTableHolders(): List<ITableViewHolder<T, C>>
 	fun getTableHolder(cell: ITableCell<T>): ITableViewHolder<T, C>?
 
+	fun releaseTableDataViewHolders()
+
 }

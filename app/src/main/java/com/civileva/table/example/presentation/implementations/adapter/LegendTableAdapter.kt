@@ -32,7 +32,52 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	}
 
 
-	protected fun bindLegendPanel(holder: ILegendTableViewHolder, panel: ILegendPanel) {
+	override fun updateLegendPanel(panelId: Int, viewIndex: Int, data: Any) {
+		val panel = getLegendPanel(panelId)
+		if(panel!=null) {
+			val dataList = panel.legend.data
+			val viewListCount = getLegendPanelViewsHolder(panelId)?.getPanelViews()?.count()?:0
+			if (viewListCount > viewIndex && dataList.count()>viewIndex) {
+				val mutableData = dataList.toMutableList()
+				mutableData[viewIndex] = data
+				updateLegendPanel(panelId, mutableData)
+			}else{
+				Log.e("updateLegendPanel","Cant update legend panel ${panel.direction}[${panel.id}] viewListCount=$viewListCount, viewIndex=$viewIndex")
+			}
+		}
+	}
+
+	override fun updateLegendPanel(panelId: Int, data: List<*>) {
+		val holder = getLegendPanelViewsHolder(panelId)
+		val panel = getLegendPanel(panelId)
+		val newLegend = panel?.legend?.updateData(data)
+
+		if (panel != null && newLegend != null && holder!=null) {
+			updatePanelData(panel) {
+				panel.updateLegend(newLegend)
+			}
+			val updatedData = getLegendPanel(panelId)
+			if (updatedData != null) {
+				bindLegendPanel(holder,updatedData)
+			}
+		}
+	}
+
+	private fun updatePanelData(panel: ILegendPanel, newPanel: () -> ILegendPanel) {
+		val panelsCopy = mutableListOf<ILegendPanel>()
+		for (i: Int in 0 until panels.count()) {
+			val p = if (panels[i].id == panel.id) {
+				newPanel()
+			} else {
+				panels[i]
+			}
+			panelsCopy.add(p)
+		}
+
+		panels = panelsCopy
+	}
+
+	private fun bindLegendPanel(holder: ILegendTableViewHolder, panel: ILegendPanel) {
 		holder.bindPanelData(panel.legend.data)
 
 		holder.getPanelViews().forEach {
@@ -53,38 +98,6 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		}
 	}
 
-
-
-	override fun updateLegendPanel(panelId: Int, data: List<*>) {
-		val holder = getLegendPanelViewsHolder(panelId)
-		val panel = getLegendPanel(panelId)
-		val newLegend = panel?.legend?.updateData(data)
-
-		if (panel != null && newLegend != null && holder!=null) {
-			updatePanelData(panel) {
-				panel.updateLegend(newLegend)
-			}
-			val updatedData = getLegendPanel(panelId)
-			if (updatedData != null) {
-				bindLegendPanel(holder,updatedData)
-			}
-		}
-	}
-
-	override fun updateLegendPanel(panelId: Int, viewIndex: Int, data: Any) {
-		val panel = getLegendPanel(panelId)
-		if(panel!=null) {
-			val dataList = panel.legend.data
-			val viewListCount = getLegendPanelViewsHolder(panelId)?.getPanelViews()?.count()?:0
-			if (viewListCount > viewIndex && dataList.count()>viewIndex) {
-				val mutableData = dataList.toMutableList()
-				mutableData[viewIndex] = data
-				updateLegendPanel(panelId, mutableData)
-			}else{
-				Log.e("updateLegendPanel","Cant update legend panel ${panel.direction}[${panel.id}] viewListCount=$viewListCount, viewIndex=$viewIndex")
-			}
-		}
-	}
 
 
 	override fun measureLegendPanelSize(panel: ILegendPanel, size: ILegendPanel.Size) {
@@ -181,20 +194,6 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	}
 
 
-	private fun updatePanelData(panel: ILegendPanel, newPanel: () -> ILegendPanel) {
-		val panelsCopy = mutableListOf<ILegendPanel>()
-		for (i: Int in 0 until panels.count()) {
-			val p = if (panels[i].id == panel.id) {
-				newPanel()
-			} else {
-				panels[i]
-			}
-			panelsCopy.add(p)
-		}
-
-		panels = panelsCopy
-	}
-
 	override fun getLegendPanels(): List<ILegendPanel> {
 		return panels
 	}
@@ -212,5 +211,14 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 
 	override fun findLegendPanel(legendClass: Class<*>): List<ILegendPanel> {
 		return getLegendPanels().filter { it.legend.javaClass == legendClass }
+	}
+
+	override fun releaseLegendPanelViewHolders() {
+		panelIdHolders.forEach {
+			it.value.destroyView()
+		}
+		panelIdHolders = emptyMap()
+
+		panels = mutableListOf()
 	}
 }

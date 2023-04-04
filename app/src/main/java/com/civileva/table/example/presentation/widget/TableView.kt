@@ -100,4 +100,9 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 
 		}
 	}
+
+	open fun clear(){
+		tableAdapter?.releaseTableDataViewHolders()
+		removeAllViews()
+	}
 }

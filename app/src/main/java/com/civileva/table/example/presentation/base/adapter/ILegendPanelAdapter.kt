@@ -17,4 +17,7 @@ interface ILegendPanelAdapter {
 
 	fun measureLegendPanelSize(panel: ILegendPanel, size: ILegendPanel.Size)
 
+
+	fun releaseLegendPanelViewHolders()
+
 }

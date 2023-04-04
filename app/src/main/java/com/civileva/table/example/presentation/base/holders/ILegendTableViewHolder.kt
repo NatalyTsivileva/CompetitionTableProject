@@ -5,4 +5,6 @@ import android.view.View
 interface ILegendTableViewHolder {
 	fun bindPanelData(data:List<*>)
 	fun getPanelViews(): List<View>
+
+	fun destroyView()
 }

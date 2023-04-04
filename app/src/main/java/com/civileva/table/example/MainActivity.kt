@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 			}
 
 			R.id.menuTableDelete -> {
-				//tableView?.release()
+				tableView?.clear()
 				true
 			}
 			else -> super.onOptionsItemSelected(item)
@@ -139,10 +139,11 @@ class MainActivity : AppCompatActivity() {
 		excludePanelsIds: List<Int> = emptyList()
 	) {
 		tableView = findViewById(R.id.tableView)
+		tableView?.clear()
 
 		with(TableUtils.createIntegerTable(size)) {
-			val legendPanelHolders =
-				TableAdapterUtils.createLegendsHolderMap(applicationContext, this)
+			var legendPanelHolders = TableAdapterUtils.createLegendsHolderMap(applicationContext, this)
+			legendPanelHolders = legendPanelHolders.filter { !excludePanelsIds.contains(it.key.id) }
 			val cellHolders = TableUtils.createCellHolders(this, applicationContext)
 
 
