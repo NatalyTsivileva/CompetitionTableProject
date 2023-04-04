@@ -1,13 +1,18 @@
 package com.civileva.table.example
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.civileva.table.example.data.CellInteger
+import com.civileva.table.example.data.Sorting
+import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.base.legends.ILegendPanel
 import com.civileva.table.example.presentation.implementations.adapter.CompetitionLegendTableAdapter
+import com.civileva.table.example.presentation.implementations.adapter.listeners.InputCellClickListener
 import com.civileva.table.example.presentation.widget.LegendHeaderTableView
 import com.civileva.table.example.utils.TableAdapterUtils
 import com.civileva.table.example.utils.TableUtils
@@ -16,6 +21,55 @@ import com.civileva.table.test.R
 class MainActivity : AppCompatActivity() {
 	private var tableSize = 7
 	private var tableView: LegendHeaderTableView? = null
+	private var tableAdapter: CompetitionLegendTableAdapter? = null
+	private var tableData: Table<Int, CellInteger>? = null
+
+	private val cellListener = object : InputCellClickListener {
+		override fun onDataInput(cell: CellInteger, data: Int) {
+			tableData?.updateCellData(cell, data)
+			val cursor = tableData?.getCursor(cell.rowNumber)
+			if (cursor?.isRowFullFilled == true) {
+				updateScore(rowNumber = cursor.rowNumber + 1, score = cursor.dataSum.toString())
+				updatePlaces()
+			} else {
+				clearPlaces()
+			}
+		}
+	}
+
+	private fun updateScore(rowNumber: Int, score: Any) {
+		tableAdapter?.updateLegendPanel(
+			panelId = ILegendPanel.RIGHT_SCORE,
+			viewIndex = rowNumber,
+			data = score
+		)
+	}
+
+	private fun updatePlaces() {
+		val places = tableData
+			?.sortTableRows(Sorting.Direction.DESC)
+			?: emptyList()
+
+		places.forEach {
+			tableAdapter?.updateLegendPanel(
+				ILegendPanel.RIGHT_PLACE,
+				it.cursor.rowNumber + 1,
+				(it.order + 1).toString()
+			)
+		}
+	}
+
+	private fun clearPlaces(){
+		Log.d("clearr","CLEAR PLACES")
+		tableAdapter
+			?.getLegendPanelViewsHolder(ILegendPanel.RIGHT_PLACE)
+			?.getPanelViews()
+			?.forEachIndexed { index, view ->
+				if (index != 0) {
+					tableAdapter?.updateLegendPanel(ILegendPanel.RIGHT_PLACE, index, " ")
+				}
+			}
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -86,16 +140,28 @@ class MainActivity : AppCompatActivity() {
 	) {
 		tableView = findViewById(R.id.tableView)
 
-		val tableData = TableUtils.createIntegerTable(size)
+		with(TableUtils.createIntegerTable(size)) {
+			val legendPanelHolders =
+				TableAdapterUtils.createLegendsHolderMap(applicationContext, this)
+			val cellHolders = TableUtils.createCellHolders(this, applicationContext)
 
-		val legendPanelHolders = TableAdapterUtils.createLegendsHolderMap(applicationContext, tableData)
-		val cellHolders = TableUtils.createCellHolders(tableData,applicationContext)
 
-		tableView?.apply {
-			val compAdapter = CompetitionLegendTableAdapter(tableData, cellHolders, legendPanelHolders)
-			setLegendAdapter(compAdapter)
-			setCellAdapter(compAdapter)
+			tableView?.apply {
+				val compAdapter = CompetitionLegendTableAdapter(
+					this@with,
+					cellListener,
+					cellHolders,
+					legendPanelHolders
+				)
+				setLegendAdapter(compAdapter)
+				setCellAdapter(compAdapter)
+				tableAdapter = compAdapter
+			}
+
+			tableData = this
 		}
+
+
 	}
 
 	private fun excludePanels(

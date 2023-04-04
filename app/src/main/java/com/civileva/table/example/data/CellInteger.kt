@@ -10,12 +10,18 @@ class CellInteger(
 
 	override fun isEnabledForInput() = rowNumber != columnNumber
 
-	override fun hasValidData() = data in 0..5
+	override fun hasValidData() = isValidData(data)
 
 	override fun isNewRow() = !isFirst() && (index % tableSize == 0)
 
 	override fun isFirst() = index == 0
 
 	override fun isValidPartition(): Boolean =
-		(data == null && !isEnabledForInput()) || data in 0..5
+		(data == null && !isEnabledForInput()) || (isValidData(data) && isEnabledForInput())
+
+	companion object {
+		fun isValidData(data: Int?): Boolean {
+			return data in 0..5
+		}
+	}
 }

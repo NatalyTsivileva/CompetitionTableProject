@@ -2,7 +2,6 @@ package com.civileva.table.example.utils
 
 import android.content.Context
 import com.civileva.table.example.data.CellInteger
-import com.civileva.table.example.data.ITableCell
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.implementations.holders.InputCellViewHolder
 
@@ -47,8 +46,8 @@ object TableUtils {
 	}
 
 
-	fun <T : Comparable<T>, C : ITableCell<T>> createCellHolders(
-		table: Table<T, C>,
+	fun  createCellHolders(
+		table: Table<Int, CellInteger>,
 		context: Context
 	) = (0 until table.size * table.size).map {
 		InputCellViewHolder(context)

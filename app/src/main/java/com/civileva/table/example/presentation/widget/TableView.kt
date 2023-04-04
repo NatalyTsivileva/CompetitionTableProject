@@ -59,7 +59,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 			val widthSpec = MeasureSpec.makeMeasureSpec(cellWidth.toInt(), MeasureSpec.EXACTLY)
 			val heightSpec = MeasureSpec.makeMeasureSpec(cellHeight.toInt(), MeasureSpec.EXACTLY)
 			val holder = adapter.getTableHolder(it)
-			val view = holder?.getTableView()
+			val view = holder?.getTableView(it)
 			view?.measure(widthSpec, heightSpec)
 		}
 	}
@@ -79,7 +79,7 @@ open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 			var startY = y
 
 			adapter.getTableData().forEach { c ->
-				val view = adapter.getTableHolder(c)?.getTableView()
+				val view = adapter.getTableHolder(c)?.getTableView(c)
 				val viewHeight = view?.measuredHeight ?: 0
 				val viewWidth = view?.measuredWidth ?: 0
 

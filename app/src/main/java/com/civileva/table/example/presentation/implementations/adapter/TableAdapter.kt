@@ -9,6 +9,7 @@ import com.civileva.table.example.data.ITableCell
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.base.adapter.ITableAdapter
 import com.civileva.table.example.presentation.base.holders.ITableViewHolder
+import com.civileva.table.example.presentation.base.listener.ITableClickListener
 
 /**
  * Адаптер для таблицы. T - тип данных в ячейках с данными, C - ячейки
@@ -18,35 +19,26 @@ import com.civileva.table.example.presentation.base.holders.ITableViewHolder
  */
 open class TableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	private val table: Table<T, C>,
-	cellHoldersList: List<ITableViewHolder<T, C>>
+	cellHoldersList: List<ITableViewHolder<T, C>>,
+	listener:ITableClickListener<T,C>
 ) : ITableAdapter<T, C> {
 
 	private var cellHolders: MutableList<ITableViewHolder<T, C>> = cellHoldersList.toMutableList()
 
+
 	init {
-			bindHolders(cellHolders)
+			bindHolders(cellHolders,listener)
 	}
 
-	private fun bindHolders(holders: List<ITableViewHolder<T, C>>) {
+	private fun bindHolders(holders: List<ITableViewHolder<T, C>>, listener: ITableClickListener<T,C>) {
 		holders.forEachIndexed { index, iTableViewHolder ->
 			if (index < table.size * table.size) {
 				val cell = table.getCells()[index]
-				iTableViewHolder.bindData(cell)
+				iTableViewHolder.bindData(cell,listener)
 			}
 		}
 
 	}
-
-	fun setupTextColor(cellIndex: Int, isFailedInput: Boolean, ed: Editable?) {
-		val isNotValidScore = !table.getCell(cellIndex).hasValidData()
-
-		val color = if (isFailedInput || isNotValidScore) Color.RED else Color.BLACK
-
-		ed?.setSpan(
-			ForegroundColorSpan(color), 0, ed.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE
-		)
-	}
-
 
 	fun aggregateRowSum(rowNumber: Int): Cursor<T, C> {
 		return table.getCursor(rowNumber)

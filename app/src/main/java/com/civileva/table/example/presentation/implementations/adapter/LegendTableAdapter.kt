@@ -8,40 +8,42 @@ import com.civileva.table.example.presentation.base.adapter.ILegendPanelAdapter
 import com.civileva.table.example.presentation.base.holders.ILegendTableViewHolder
 import com.civileva.table.example.presentation.base.holders.ITableViewHolder
 import com.civileva.table.example.presentation.base.legends.ILegendPanel
+import com.civileva.table.example.presentation.base.listener.ITableClickListener
 import kotlin.math.ceil
 
 open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 	private val table: Table<T, C>,
-	cellHolders:List<ITableViewHolder<T,C>>,
+	cellListener: ITableClickListener<T, C>,
+	cellHolders: List<ITableViewHolder<T, C>>,
 	legendHolderMap: Map<ILegendPanel, ILegendTableViewHolder>,
-) : TableAdapter<T, C>(table,cellHolders), ILegendPanelAdapter {
+) : TableAdapter<T, C>(table, cellHolders, cellListener), ILegendPanelAdapter {
 
-	private var legendHoldersMap: MutableMap<ILegendPanel, ILegendTableViewHolder> = legendHolderMap.toMutableMap()
+	private var panelIdHolders: Map<Int, ILegendTableViewHolder> = legendHolderMap
+		.map {
+			it.key.id to it.value
+		}.toMap()
+
+	private var panels: MutableList<ILegendPanel> = legendHolderMap.keys.toMutableList()
 
 	init {
 		legendHolderMap.forEach { (panel, holder) ->
 			bindLegendPanel(holder, panel)
 		}
-
 	}
 
 
-	override fun getLegendPanels(): List<ILegendPanel> {
-		return legendHoldersMap.toList().map { it.first }
-	}
-
-	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
-		return getLegendPanels().filter { it.direction == direction }
-	}
-
-	private fun bindLegendPanel(holder: ILegendTableViewHolder, panel: ILegendPanel) {
+	protected fun bindLegendPanel(holder: ILegendTableViewHolder, panel: ILegendPanel) {
 		holder.bindPanelData(panel.legend.data)
 
 		holder.getPanelViews().forEach {
 			measureWrapContentSize(it)
 		}
+
 		val newSize = getMeasuredPanelSize(panel)
-		updateHolderMap(panel, newSize)
+
+		updatePanelData(panel) {
+			panel.updateSize(newSize)
+		}
 
 		getLegendPanels().forEach {
 			Log.d(
@@ -51,18 +53,39 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		}
 	}
 
-	override fun getLegendPanel(panelId: Int): ILegendPanel? {
-		return legendHoldersMap.keys.find { it.id == panelId }
-	}
-
-	override fun getLegendPanelViewsHolder(panelId: Int): ILegendTableViewHolder? {
-		return legendHoldersMap.filter { it.key.id == panelId }.values.firstOrNull()
-	}
 
 
-	override fun findLegendPanel(legendClass: Class<*>): List<ILegendPanel>{
-		return getLegendPanels().filter { it.legend.javaClass == legendClass }
+	override fun updateLegendPanel(panelId: Int, data: List<*>) {
+		val holder = getLegendPanelViewsHolder(panelId)
+		val panel = getLegendPanel(panelId)
+		val newLegend = panel?.legend?.updateData(data)
+
+		if (panel != null && newLegend != null && holder!=null) {
+			updatePanelData(panel) {
+				panel.updateLegend(newLegend)
+			}
+			val updatedData = getLegendPanel(panelId)
+			if (updatedData != null) {
+				bindLegendPanel(holder,updatedData)
+			}
+		}
 	}
+
+	override fun updateLegendPanel(panelId: Int, viewIndex: Int, data: Any) {
+		val panel = getLegendPanel(panelId)
+		if(panel!=null) {
+			val dataList = panel.legend.data
+			val viewListCount = getLegendPanelViewsHolder(panelId)?.getPanelViews()?.count()?:0
+			if (viewListCount > viewIndex && dataList.count()>viewIndex) {
+				val mutableData = dataList.toMutableList()
+				mutableData[viewIndex] = data
+				updateLegendPanel(panelId, mutableData)
+			}else{
+				Log.e("updateLegendPanel","Cant update legend panel ${panel.direction}[${panel.id}] viewListCount=$viewListCount, viewIndex=$viewIndex")
+			}
+		}
+	}
+
 
 	override fun measureLegendPanelSize(panel: ILegendPanel, size: ILegendPanel.Size) {
 		val holder = getLegendPanelViewsHolder(panel.id)
@@ -72,7 +95,10 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		}
 
 		val newSize = getMeasuredPanelSize(panel)
-		updateHolderMap(panel, newSize)
+
+		updatePanelData(panel) {
+			panel.updateSize(newSize)
+		}
 	}
 
 
@@ -154,16 +180,37 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		return ILegendPanel.Size(width = panelWidth, height = panelHeight)
 	}
 
-	protected fun updateHolderMap(panel: ILegendPanel, size: ILegendPanel.Size) {
-		val newMap = mutableMapOf<ILegendPanel, ILegendTableViewHolder>()
-		legendHoldersMap.forEach {
-			val updatedPanel = if (it.key == panel) it.key.updateSize(size) else it.key
-			val oldHolder = getLegendPanelViewsHolder(it.key.id)
-			if (oldHolder != null)
-				newMap[updatedPanel] = oldHolder
 
+	private fun updatePanelData(panel: ILegendPanel, newPanel: () -> ILegendPanel) {
+		val panelsCopy = mutableListOf<ILegendPanel>()
+		for (i: Int in 0 until panels.count()) {
+			val p = if (panels[i].id == panel.id) {
+				newPanel()
+			} else {
+				panels[i]
+			}
+			panelsCopy.add(p)
 		}
-		legendHoldersMap = newMap
+
+		panels = panelsCopy
 	}
 
+	override fun getLegendPanels(): List<ILegendPanel> {
+		return panels
+	}
+
+	override fun getLegendPanels(direction: ILegendPanel.Direction): List<ILegendPanel> {
+		return getLegendPanels().filter { it.direction == direction }
+	}
+	override fun getLegendPanel(panelId: Int): ILegendPanel? {
+		return getLegendPanels().find { it.id == panelId }
+	}
+
+	override fun getLegendPanelViewsHolder(panelId: Int): ILegendTableViewHolder? {
+		return panelIdHolders[panelId]
+	}
+
+	override fun findLegendPanel(legendClass: Class<*>): List<ILegendPanel> {
+		return getLegendPanels().filter { it.legend.javaClass == legendClass }
+	}
 }

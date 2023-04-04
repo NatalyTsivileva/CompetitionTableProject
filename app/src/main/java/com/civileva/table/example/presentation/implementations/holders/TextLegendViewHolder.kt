@@ -8,10 +8,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.civileva.table.example.presentation.base.holders.ILegendTableViewHolder
 import com.civileva.table.test.R
 
-class TextLegendViewHolder(
+open class TextLegendViewHolder(
 	private val context: Context,
 	itemCount: Int,
-	@LayoutRes val layoutRes:Int = R.layout.item_legend
+	@LayoutRes val layoutRes: Int = R.layout.item_legend
 ) : ILegendTableViewHolder {
 
 	private val views = (0 until itemCount).map { createTextView() }.toMutableList()
@@ -21,22 +21,28 @@ class TextLegendViewHolder(
 	}
 
 	override fun bindPanelData(data: List<*>) {
-		Log.d("TextLegendViewHolder", "data=${data} ${data.javaClass}, count=${data.count()},")
-			data.forEachIndexed { index, any ->
-				Log.d(
-					"TextLegendViewHolder",
-					"data[$index]=${any}, any is String = ${any is String}"
-				)
-
-				when (any) {
-					is String-> views[index].text = any.toString()
-				}
-			}
-
+		for (i: Int in 0 until data.count()) {
+			val itemData = data[i]
+			updateView(itemData,views[i])
+		}
 	}
 
-	private fun createTextView(text: String=""): AppCompatTextView {
-		val view = View.inflate(context,layoutRes,null) as AppCompatTextView
+	open fun updateView(data: Any?, view: AppCompatTextView): Boolean {
+		val parsed = when (data) {
+			is String -> {
+				view.text = data.toString()
+				true
+			}
+			else -> {
+				Log.e("bindPanelData", "Cant update view. Data=${data}")
+				false
+			}
+		}
+		return parsed
+	}
+
+	private fun createTextView(text: String = ""): AppCompatTextView {
+		val view = View.inflate(context, layoutRes, null) as AppCompatTextView
 		view.text = text
 		return view
 	}

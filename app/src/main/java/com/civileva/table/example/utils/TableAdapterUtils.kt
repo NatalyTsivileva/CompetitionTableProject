@@ -42,14 +42,14 @@ object TableAdapterUtils {
 
 		//Right Score
 		val scoreHeader = context.getString(R.string.label_score)
-		var data = (0 until table.size + 1).map { if (it == 0) scoreHeader else "?" }
+		var data = (0 until table.size + 1).map { if (it == 0) scoreHeader else " " }
 		val scoreLegend = LabeledListLegend(data)
 		val scorePanel = RightScoreLegendPanel(scoreLegend)
 		map[scorePanel] = TextLegendViewHolder(context, scoreLegend.itemsCount)
 		//Right Place
 
 		val placeHeader = context.getString(R.string.label_place)
-		data = (0 until table.size + 1).map { if (it == 0) placeHeader else "?" }
+		data = (0 until table.size + 1).map { if (it == 0) placeHeader else " " }
 		val placeLegend = LabeledListLegend(data)
 		val placePanel = RightPlaceLegendPanel(placeLegend)
 		map[placePanel] = TextLegendViewHolder(context, placeLegend.itemsCount)

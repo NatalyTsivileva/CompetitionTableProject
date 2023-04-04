@@ -18,16 +18,16 @@ open class LegendHeaderTableView(
 		measuredParentWidth: Int
 	) {
 		super.measureLegend(adapter, measuredParentHeight, measuredParentWidth)
-		adapter.findLegendPanel(LabeledListLegend::class.java).forEach {panel->
+		adapter.findLegendPanel(LabeledListLegend::class.java).forEach { panel ->
 			val topPanelCount = getTopPanelItemCount() ?: 0
 			if (topPanelCount > 0) {
 				val firstPanelView = getLegendAdapter()
 					?.getLegendPanelViewsHolder(panel.id)
 					?.getPanelViews()
 					?.firstOrNull()
-				val wSpec = MeasureSpec.makeMeasureSpec(panel.panelSize.width,MeasureSpec.EXACTLY)
-				val hSpec = MeasureSpec.makeMeasureSpec(getTopPanelsHeight(),MeasureSpec.EXACTLY)
-				firstPanelView?.measure(wSpec,hSpec)
+				val wSpec = MeasureSpec.makeMeasureSpec(panel.panelSize.width, MeasureSpec.EXACTLY)
+				val hSpec = MeasureSpec.makeMeasureSpec(getTopPanelsHeight(), MeasureSpec.EXACTLY)
+				firstPanelView?.measure(wSpec, hSpec)
 
 			}
 		}
@@ -39,13 +39,18 @@ open class LegendHeaderTableView(
 		availableWidth: Int
 	): ILegendPanel.Size {
 		return if (panel.legend is LabeledListLegend) {
-			val firstDataCell = getCellAdapter()?.getTableHolders()?.firstOrNull()?.getTableView()
-			val firstDataCellHeight = firstDataCell?.measuredHeight ?: 0
-			super.resizePanelsViews(
-				panel,
-				firstDataCellHeight * (panel.legend.itemsCount),
-				availableWidth
-			)
+			val firstCell = getCellAdapter()?.getTableData()?.firstOrNull()
+			var firstDataCellHeight = 0
+
+			if (firstCell != null) {
+				val firstCellView =
+					getCellAdapter()?.getTableHolders()?.firstOrNull()?.getTableView(firstCell)
+				firstDataCellHeight = firstCellView?.measuredHeight ?: 0
+			}
+
+			val newHeight = firstDataCellHeight * (panel.legend.itemsCount)
+			super.resizePanelsViews(panel, newHeight, availableWidth)
+
 		} else {
 			return super.resizePanelsViews(panel, availableHeight, availableWidth)
 		}

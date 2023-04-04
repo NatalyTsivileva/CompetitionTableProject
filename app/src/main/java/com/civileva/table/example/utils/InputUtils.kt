@@ -17,4 +17,12 @@ object InputUtils {
 			FAILED_INT_INPUT
 		}
 	}
+
+	fun safeStringList(list:List<*>):List<String>{
+		val data = mutableListOf<String>()
+		list.forEach {
+			if(it is String) data.add(it)
+		}
+		return data
+	}
 }
