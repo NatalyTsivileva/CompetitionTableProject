@@ -7,7 +7,6 @@ interface ILegendPanel {
 	val panelSize: Size
 	fun updateSize(size: Size): ILegendPanel
 	fun updateLegend(legend:ILegend):ILegendPanel
-	//fun updateLegend(legend:ILegend):ILegendPanel
 
 	data class Size(val width: Int, val height: Int) {
 		fun isUndefined() = width == UNDEFINED_SIZE || height == UNDEFINED_SIZE

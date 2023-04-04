@@ -143,9 +143,10 @@ class MainActivity : AppCompatActivity() {
 		tableView?.clear()
 
 		with(TableUtils.createIntegerTable(size)) {
-			var legendPanelHolders =
-				TableAdapterUtils.createLegendsHolderMap(this@MainActivity, this)
+
+			var legendPanelHolders = TableAdapterUtils.createLegendsHolderMap(this@MainActivity, this)
 			legendPanelHolders = legendPanelHolders.filter { !excludePanelsIds.contains(it.key.id) }
+
 			val cellHolders = TableUtils.createCellHolders(this, this@MainActivity)
 
 

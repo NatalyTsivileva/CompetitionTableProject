@@ -11,13 +11,8 @@ import kotlin.math.ceil
 
 open class TableView<T : Comparable<T>, C : ITableCell<T>>(
 	context: Context,
-	val attrs: AttributeSet,
+	attrs: AttributeSet,
 ) : ViewGroup(context, attrs) {
-
-	val p = Paint().apply {
-		color = Color.BLACK
-		strokeWidth = 5f
-	}
 
 	private var tableAdapter: ITableAdapter<T, C>? = null
 
