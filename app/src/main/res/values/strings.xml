@@ -12,6 +12,12 @@
 	<string name="menu_table_7x7">Table 7x7</string>
 	<string name="menu_table_10x10">Table 10x10</string>
 	<string name="menu_table_delete">Clean up</string>
+	<string name="menu_rules">Rules</string>
+	<string name="menu_rules_text">Cells marked with "X" are added manually, valid values ​​are from 0 to 5.
+When filling in the entire line, the sum of all score lines should be displayed in the column "Sum of points".
+When filling the entire table in the "place" each participant must be assigned a place depending on the number of points.</string>
+
+	<string name="dialog_btn_ok">Ok</string>
 
 	<string name="inputCellHint" translatable="false">X</string>
 

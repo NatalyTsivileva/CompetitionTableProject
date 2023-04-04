@@ -20,4 +20,6 @@
 	<style name="LegendStyle" parent="Widget.AppCompat.TextView">
 		<item name="android:gravity">center</item>
 	</style>
+
+<style name="DialogStyle" parent="Theme.AppCompat.Dialog.Alert"/>
 </resources>

@@ -1,10 +1,12 @@
 package com.civileva.table.example
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.civileva.table.example.data.CellInteger
 import com.civileva.table.example.data.Sorting
@@ -78,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-		MenuInflater(applicationContext).inflate(R.menu.main_menu, menu)
+		menuInflater.inflate(R.menu.main_menu, menu)
 		return true
 	}
 
@@ -124,6 +126,11 @@ class MainActivity : AppCompatActivity() {
 				tableView?.clear()
 				true
 			}
+
+			R.id.menuRules->{
+				showRulesDialog()
+				true
+			}
 			else -> super.onOptionsItemSelected(item)
 		}
 	}
@@ -137,9 +144,9 @@ class MainActivity : AppCompatActivity() {
 
 		with(TableUtils.createIntegerTable(size)) {
 			var legendPanelHolders =
-				TableAdapterUtils.createLegendsHolderMap(applicationContext, this)
+				TableAdapterUtils.createLegendsHolderMap(this@MainActivity, this)
 			legendPanelHolders = legendPanelHolders.filter { !excludePanelsIds.contains(it.key.id) }
-			val cellHolders = TableUtils.createCellHolders(this, applicationContext)
+			val cellHolders = TableUtils.createCellHolders(this, this@MainActivity)
 
 
 			tableView?.apply {
@@ -160,4 +167,15 @@ class MainActivity : AppCompatActivity() {
 
 	}
 
+
+	private fun showRulesDialog(){
+		val okText = getString(R.string.dialog_btn_ok)
+		val rules = getString(R.string.menu_rules)
+		val dialogText = getString(R.string.menu_rules_text)
+		 AlertDialog.Builder(this,R.style.DialogStyle)
+			 .setTitle(rules)
+			 .setMessage(dialogText)
+			 .setPositiveButton(okText) { p0, p1 -> p0?.dismiss() }
+			 .show()
+	}
 }

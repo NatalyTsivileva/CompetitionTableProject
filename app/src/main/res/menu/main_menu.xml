@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item android:id="@+id/menuRules"
+		android:title="@string/menu_rules"
+		android:icon="@drawable/question_fill"
+		app:showAsAction="always"
+		/>
 	<item android:id="@+id/menuLegendOnlyIteration" android:title="@string/menu_legend_only_iter"/>
 	<item android:id="@+id/menuLegendFull" android:title="@string/menu_legend_full"/>
 	<item android:id="@+id/menuTable4x4" android:title="@string/menu_table_4x4"/>
 	<item android:id="@+id/menuTable7x7" android:title="@string/menu_table_7x7"/>
 	<item android:id="@+id/menuTable10x10" android:title="@string/menu_table_10x10"/>
 	<item android:id="@+id/menuTableDelete" android:title="@string/menu_table_delete"/>
+
+
 </menu>
