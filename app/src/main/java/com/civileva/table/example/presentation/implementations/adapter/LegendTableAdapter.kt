@@ -89,13 +89,6 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		updatePanelData(panel) {
 			panel.updateSize(newSize)
 		}
-
-		getLegendPanels().forEach {
-			Log.d(
-				"SIZE",
-				"NEW SIZE ${it.direction}${it.id} width=${it.panelSize.width}, height=${it.panelSize.height}"
-			)
-		}
 	}
 
 
@@ -139,11 +132,6 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		val specHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
 		val specWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
 		view.measure(specWidth, specHeight)
-
-		Log.d(
-			"measureExactlySize",
-			"Вьюха высота =${view.measuredHeight},Ширина=${view.measuredWidth}"
-		)
 	}
 
 
@@ -160,10 +148,6 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 		)
 		view.measure(specWidth, specHeight)
 
-		Log.d(
-			"measureWrapContentSize",
-			"Вьюха высота =${view.measuredHeight},Ширина=${view.measuredWidth}"
-		)
 		return ILegendPanel.Size(width = view.measuredWidth, height = view.measuredHeight)
 	}
 
@@ -186,10 +170,6 @@ open class LegendTableAdapter<T : Comparable<T>, C : ITableCell<T>>(
 				}
 			}
 		}
-		Log.d(
-			"getMeasuredPanelSize",
-			"${panel}${panel.id} h=${panelHeight}, w=${panelWidth}"
-		)
 		return ILegendPanel.Size(width = panelWidth, height = panelHeight)
 	}
 

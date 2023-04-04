@@ -59,7 +59,6 @@ class InputCellViewHolder(
 			data?.let { setText(it.toString())}
 			addTextChangedListener {ed->
 				processInput(cell, ed, listener)
-				Log.d("input","bindData=${ed.toString()}")
 			}
 		}
 	}

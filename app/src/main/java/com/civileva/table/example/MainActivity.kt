@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun clearPlaces(){
-		Log.d("clearr","CLEAR PLACES")
 		tableAdapter
 			?.getLegendPanelViewsHolder(ILegendPanel.RIGHT_PLACE)
 			?.getPanelViews()

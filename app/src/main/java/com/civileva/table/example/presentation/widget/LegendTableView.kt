@@ -64,12 +64,7 @@ open class LegendTableView<T : Comparable<T>, C : ITableCell<T>>(
 				availableWidth = getContentAreaWidth(measuredParentWidth)
 			)
 			adapter.measureLegendPanelSize(panel, panelSize)
-			Log.d(
-				"resizePanelsViews",
-				"${panel.id}${panel.direction}, newHeight:h=${panelSize.height},newWidth:w=${panelSize.width}"
-			)
 		}
-		//borders = adapter.measureLegendPanels()
 
 	}
 
@@ -116,7 +111,6 @@ open class LegendTableView<T : Comparable<T>, C : ITableCell<T>>(
 			if (panel.direction == ILegendPanel.Direction.TOP) {
 				val panelHeight = panel.panelSize.height
 
-				Log.d("layoutTopLegends", "panelHeight ${panelHeight}")
 
 				adapter
 					.getLegendPanelViewsHolder(panel.id)
