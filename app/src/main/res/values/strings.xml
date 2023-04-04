@@ -1,9 +1,9 @@
 <resources>
-	<string name="app_name" translatable="false">Competitions</string>
+	<string name="app_name">Competitions</string>
 	<string name="label_competing">Competing</string>
 	<string name="label_score">Score</string>
 	<string name="label_place">Place</string>
-	<string name="label_apponent">VS</string>
+	<string name="label_game">Game</string>
 
 	<string name="menu_legend_only_iter">Only iterator legend</string>
 	<string name="menu_legend_full">Full legends</string>

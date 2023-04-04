@@ -1,7 +1,6 @@
 package com.civileva.table.example
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -28,12 +27,14 @@ class MainActivity : AppCompatActivity() {
 		override fun onDataInput(cell: CellInteger, data: Int) {
 			tableData?.updateCellData(cell, data)
 			val cursor = tableData?.getCursor(cell.rowNumber)
-			if (cursor?.isRowFullFilled == true) {
-				updateScore(rowNumber = cursor.rowNumber + 1, score = cursor.dataSum.toString())
-				updatePlaces()
-			} else {
-				clearPlaces()
-			}
+			if (cursor != null)
+				if (cursor.isRowFullFilled) {
+					updateScore(rowNumber = cursor.rowNumber + 1, score = cursor.dataSum.toString())
+					updatePlaces()
+				} else {
+					clearPlaces()
+					updateScore(rowNumber = cursor.rowNumber + 1, score = "")
+				}
 		}
 	}
 
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-	private fun clearPlaces(){
+	private fun clearPlaces() {
 		tableAdapter
 			?.getLegendPanelViewsHolder(ILegendPanel.RIGHT_PLACE)
 			?.getPanelViews()
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
-		initTable(tableSize, excludePanelsIds = listOf(ILegendPanel.TEST))
+		initTable(tableSize)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -95,15 +96,9 @@ class MainActivity : AppCompatActivity() {
 						ILegendPanel.LEFT_COMPETITION,
 						ILegendPanel.RIGHT_SCORE,
 						ILegendPanel.RIGHT_PLACE,
-						ILegendPanel.TEST
+						ILegendPanel.GAME
 					)
 				)
-				true
-			}
-
-			R.id.menuTable2x2 -> {
-				tableSize = 2
-				initTable(tableSize)
 				true
 			}
 
@@ -141,7 +136,8 @@ class MainActivity : AppCompatActivity() {
 		tableView?.clear()
 
 		with(TableUtils.createIntegerTable(size)) {
-			var legendPanelHolders = TableAdapterUtils.createLegendsHolderMap(applicationContext, this)
+			var legendPanelHolders =
+				TableAdapterUtils.createLegendsHolderMap(applicationContext, this)
 			legendPanelHolders = legendPanelHolders.filter { !excludePanelsIds.contains(it.key.id) }
 			val cellHolders = TableUtils.createCellHolders(this, applicationContext)
 
@@ -163,20 +159,5 @@ class MainActivity : AppCompatActivity() {
 
 
 	}
-
-	private fun excludePanels(
-		panels: List<ILegendPanel>,
-		viewMap: Map<Int, List<View>>,
-		ids: List<Int>
-	): Pair<List<ILegendPanel>, Map<Int, List<View>>> {
-		val newPanels = panels.filter { panel ->
-			!ids.contains(panel.id)
-		}
-		val newLegendViewsMap = viewMap.filter {
-			!ids.contains(it.key)
-		}
-		return Pair(newPanels, newLegendViewsMap)
-	}
-
 
 }

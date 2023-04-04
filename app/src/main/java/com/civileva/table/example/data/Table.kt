@@ -30,9 +30,9 @@ class Table<T : Comparable<T>, C : ITableCell<T>>(
 
 		for (columnIndex: Int in 0 until size) {
 			val index = (rowNumber * size) + columnIndex
-				val cell = this.cells[index]
-				if (cell.isValidPartition()) filledCells++
-				cells.add(cell)
+			val cell = this.cells[index]
+			if (cell.isValidPartition()) filledCells++
+			cells.add(cell)
 		}
 
 		return Cursor<T, C>(

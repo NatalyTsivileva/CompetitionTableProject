@@ -2,7 +2,6 @@ package com.civileva.table.example.utils
 
 import android.content.Context
 import com.civileva.table.example.data.CellInteger
-import com.civileva.table.example.data.ITableCell
 import com.civileva.table.example.data.Table
 import com.civileva.table.example.presentation.base.legends.ILegendPanel
 import com.civileva.table.example.presentation.implementations.holders.TextLegendViewHolder
@@ -55,9 +54,9 @@ object TableAdapterUtils {
 		map[placePanel] = TextLegendViewHolder(context, placeLegend.itemsCount)
 
 
-		val test = "test"
-		val testLegend = IterationLabeledLegend(table.size, test)
-		val testPanel = TestIterationLegendPanel(testLegend)
+		val gameText = context.getString(R.string.label_game)
+		val testLegend = IterationLabeledLegend(table.size, gameText)
+		val testPanel = BottomGameLegendPanel(testLegend)
 		map[testPanel] = TextLegendViewHolder(context, testLegend.itemsCount)
 
 

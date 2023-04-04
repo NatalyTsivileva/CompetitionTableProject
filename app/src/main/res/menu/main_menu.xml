@@ -3,7 +3,6 @@
 
 	<item android:id="@+id/menuLegendOnlyIteration" android:title="@string/menu_legend_only_iter"/>
 	<item android:id="@+id/menuLegendFull" android:title="@string/menu_legend_full"/>
-	<item android:id="@+id/menuTable2x2" android:title="@string/menu_table_2x2"/>
 	<item android:id="@+id/menuTable4x4" android:title="@string/menu_table_4x4"/>
 	<item android:id="@+id/menuTable7x7" android:title="@string/menu_table_7x7"/>
 	<item android:id="@+id/menuTable10x10" android:title="@string/menu_table_10x10"/>

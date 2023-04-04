@@ -17,7 +17,7 @@ class CellInteger(
 	override fun isFirst() = index == 0
 
 	override fun isValidPartition(): Boolean =
-		(data == null && !isEnabledForInput()) || (isValidData(data) && isEnabledForInput())
+		(data == null && !isEnabledForInput()) || isValidData(data)
 
 	companion object {
 		fun isValidData(data: Int?): Boolean {

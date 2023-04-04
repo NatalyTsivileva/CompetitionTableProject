@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="app_name">Соревнования</string>
 	<string name="label_competing">Участник</string>
 	<string name="label_score">Сумма очков</string>
 	<string name="label_place">Место</string>
-	<string name="label_apponent">VS</string>
+	<string name="label_game">Игра</string>
 
 
 	<string name="menu_legend_only_iter">Легенды-итераторы</string>
